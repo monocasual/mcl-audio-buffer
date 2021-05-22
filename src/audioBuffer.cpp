@@ -24,7 +24,7 @@
  *
  * -------------------------------------------------------------------------- */
 
-#include "audioBuffer.h"
+#include "audioBuffer.hpp"
 #include <algorithm>
 #include <cassert>
 
