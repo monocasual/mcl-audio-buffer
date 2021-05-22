@@ -28,7 +28,7 @@
 #include <algorithm>
 #include <cassert>
 
-namespace monocasual
+namespace mcl
 {
 AudioBuffer::AudioBuffer()
 : m_data(nullptr)
@@ -268,4 +268,4 @@ void AudioBuffer::copy(const AudioBuffer& o)
 
 template void AudioBuffer::copyData<AudioBuffer::Operation::SUM>(const AudioBuffer&, int, int, int, float, Pan);
 template void AudioBuffer::copyData<AudioBuffer::Operation::SET>(const AudioBuffer&, int, int, int, float, Pan);
-} // namespace monocasual
+} // namespace mcl

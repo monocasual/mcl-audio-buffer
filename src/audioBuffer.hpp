@@ -29,7 +29,7 @@
 
 #include <array>
 
-namespace monocasual
+namespace mcl
 {
 /* AudioBuffer
 A class that holds a buffer filled with audio data. NOTE: currently it only
@@ -158,6 +158,6 @@ private:
 	int    m_channels;
 	bool   m_viewing;
 };
-} // namespace monocasual
+} // namespace mcl
 
 #endif
