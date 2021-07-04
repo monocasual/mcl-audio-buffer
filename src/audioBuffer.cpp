@@ -128,11 +128,13 @@ bool AudioBuffer::isAllocd() const { return m_data != nullptr; }
 
 /* -------------------------------------------------------------------------- */
 
-float AudioBuffer::getPeak() const
+float AudioBuffer::getPeak(int channel) const
 {
+	assert(channel < m_channels);
+
 	float peak = 0.0f;
-	for (int i = 0; i < countSamples(); i++)
-		peak = std::max(peak, m_data[i]);
+	for (int i = 0; i < countFrames(); i++)
+		peak = std::max(peak, (*this)[i][channel]);
 	return peak;
 }
 

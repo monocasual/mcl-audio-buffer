@@ -103,9 +103,9 @@ public:
 	bool isAllocd() const;
 
 	/* getPeak
-	Returns the highest value from any channel. */
+	Returns the highest value from the specified channel. */
 
-	float getPeak() const;
+	float getPeak(int channel) const;
 
 	void alloc(int size, int channels);
 	void free();
