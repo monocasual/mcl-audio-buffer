@@ -28,6 +28,7 @@
 #define MONOCASUAL_AUDIO_BUFFER_H
 
 #include <array>
+#include <functional>
 
 namespace mcl
 {
@@ -135,6 +136,21 @@ public:
 	void clear(int a = 0, int b = -1);
 
 	void applyGain(float g);
+
+	/* forEachFrame
+	Applies a function to each frame in the audio buffer. */
+
+	void forEachFrame(std::function<void(float*)>);
+
+	/* forEachChannel
+	Applies a function to each channel in the given frame. */
+
+	void forEachChannel(int frame, std::function<void(float&)>);
+
+	/* forEachSample
+	Applies a function to each sample in the audio buffer. */
+
+	void forEachSample(std::function<void(float&)>);
 
 private:
 	enum class Operation

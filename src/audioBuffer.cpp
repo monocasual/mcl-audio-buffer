@@ -268,6 +268,33 @@ void AudioBuffer::copy(const AudioBuffer& o)
 
 /* -------------------------------------------------------------------------- */
 
+void AudioBuffer::forEachFrame(std::function<void(float*)> f)
+{
+	for (int i = 0; i < countFrames(); i++)
+		f((*this)[i]);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void AudioBuffer::forEachChannel(int frame, std::function<void(float&)> f)
+{
+	assert(frame < m_size);
+
+	for (int i = 0; i < countChannels(); i++)
+		f((*this)[frame][i]);
+}
+
+/* -------------------------------------------------------------------------- */
+
+void AudioBuffer::forEachSample(std::function<void(float&)> f)
+{
+	for (int i = 0; i < countFrames(); i++)
+		for (int j = 0; j < countChannels(); j++)
+			f((*this)[i][j]);
+}
+
+/* -------------------------------------------------------------------------- */
+
 template void AudioBuffer::copyData<AudioBuffer::Operation::SUM>(const AudioBuffer&, int, int, int, float, Pan);
 template void AudioBuffer::copyData<AudioBuffer::Operation::SET>(const AudioBuffer&, int, int, int, float, Pan);
 } // namespace mcl
