@@ -268,29 +268,28 @@ void AudioBuffer::copy(const AudioBuffer& o)
 
 /* -------------------------------------------------------------------------- */
 
-void AudioBuffer::forEachFrame(std::function<void(float*)> f)
+void AudioBuffer::forEachFrame(std::function<void(float*, int)> f)
 {
 	for (int i = 0; i < countFrames(); i++)
-		f((*this)[i]);
+		f((*this)[i], i);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void AudioBuffer::forEachChannel(int frame, std::function<void(float&)> f)
+void AudioBuffer::forEachChannel(int frame, std::function<void(float&, int)> f)
 {
 	assert(frame < m_size);
 
 	for (int i = 0; i < countChannels(); i++)
-		f((*this)[frame][i]);
+		f((*this)[frame][i], i);
 }
 
 /* -------------------------------------------------------------------------- */
 
-void AudioBuffer::forEachSample(std::function<void(float&)> f)
+void AudioBuffer::forEachSample(std::function<void(float&, int)> f)
 {
-	for (int i = 0; i < countFrames(); i++)
-		for (int j = 0; j < countChannels(); j++)
-			f((*this)[i][j]);
+	for (int i = 0; i < countSamples(); i++)
+		f(m_data[i], i);
 }
 
 /* -------------------------------------------------------------------------- */

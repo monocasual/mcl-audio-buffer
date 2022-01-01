@@ -140,17 +140,17 @@ public:
 	/* forEachFrame
 	Applies a function to each frame in the audio buffer. */
 
-	void forEachFrame(std::function<void(float*)>);
+	void forEachFrame(std::function<void(float* /*channels*/, int /*numFrame*/)>);
 
 	/* forEachChannel
 	Applies a function to each channel in the given frame. */
 
-	void forEachChannel(int frame, std::function<void(float&)>);
+	void forEachChannel(int frame, std::function<void(float& /*value*/, int /*numChannel*/)>);
 
 	/* forEachSample
 	Applies a function to each sample in the audio buffer. */
 
-	void forEachSample(std::function<void(float&)>);
+	void forEachSample(std::function<void(float& /*value*/, int /*numSample*/)>);
 
 private:
 	enum class Operation
