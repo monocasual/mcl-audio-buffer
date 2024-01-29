@@ -135,7 +135,10 @@ public:
 
 	void clear(int a = 0, int b = -1);
 
-	void applyGain(float g);
+	/* applyGain
+	Applies gain 'g' to buffer. Optional parameters	'a' and 'b' set the range.*/
+
+	void applyGain(float g, int a = 0, int b = -1);
 
 	/* forEachFrame
 	Applies a function to each frame in the audio buffer. */

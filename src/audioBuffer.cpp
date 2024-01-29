@@ -226,9 +226,18 @@ void AudioBuffer::copyData(const AudioBuffer& b, int framesToCopy,
 
 /* -------------------------------------------------------------------------- */
 
-void AudioBuffer::applyGain(float g)
+void AudioBuffer::applyGain(float g, int a, int b)
 {
-	for (int i = 0; i < countSamples(); i++)
+	assert(a >= 0);
+	assert(b < countSamples());
+
+	if (b == -1)
+	{
+		b = countSamples();
+		assert(a < b);
+	}
+
+	for (int i = a; i < b; i++)
 		m_data[i] *= g;
 }
 
