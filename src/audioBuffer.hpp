@@ -29,6 +29,7 @@
 
 #include <array>
 #include <functional>
+#include <memory>
 
 namespace mcl
 {
@@ -172,10 +173,10 @@ private:
 	void sum(int f, int channel, float val);
 	void set(int f, int channel, float val);
 
-	float* m_data;
-	int    m_size;
-	int    m_channels;
-	bool   m_viewing;
+	std::unique_ptr<float[]> m_data;
+	int                      m_size;
+	int                      m_channels;
+	bool                     m_viewing;
 };
 } // namespace mcl
 

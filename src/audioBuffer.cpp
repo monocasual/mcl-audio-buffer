@@ -105,7 +105,7 @@ float* AudioBuffer::operator[](int offset) const
 {
 	assert(m_data != nullptr);
 	assert(offset < m_size);
-	return m_data + (offset * m_channels);
+	return m_data.get() + (offset * m_channels);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -116,7 +116,7 @@ void AudioBuffer::clear(int a, int b)
 		return;
 	if (b == -1)
 		b = m_size;
-	std::fill_n(m_data + (a * m_channels), (b - a) * m_channels, 0.0);
+	std::fill_n(m_data.get() + (a * m_channels), (b - a) * m_channels, 0.0);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -147,7 +147,7 @@ void AudioBuffer::alloc(int size, int channels)
 	free();
 	m_size     = size;
 	m_channels = channels;
-	m_data     = new float[m_size * m_channels];
+	m_data     = std::make_unique<float[]>(m_size * m_channels);
 	clear();
 }
 
@@ -155,10 +155,7 @@ void AudioBuffer::alloc(int size, int channels)
 
 void AudioBuffer::free()
 {
-	if (m_data == nullptr)
-		return;
-	delete[] m_data;
-	m_data     = nullptr;
+	m_data.reset();
 	m_size     = 0;
 	m_channels = 0;
 	m_viewing  = false;
@@ -238,7 +235,7 @@ void AudioBuffer::applyGain(float g, int a, int b)
 	}
 
 	for (int i = a; i < b; i++)
-		m_data[i] *= g;
+		m_data.get()[i] *= g;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -252,7 +249,7 @@ void AudioBuffer::move(AudioBuffer&& o)
 {
 	assert(o.countChannels() <= NUM_CHANS);
 
-	m_data     = o.m_data;
+	m_data     = std::move(o.m_data);
 	m_size     = o.m_size;
 	m_channels = o.m_channels;
 	m_viewing  = o.m_viewing;
@@ -267,12 +264,12 @@ void AudioBuffer::move(AudioBuffer&& o)
 
 void AudioBuffer::copy(const AudioBuffer& o)
 {
-	m_data     = new float[o.m_size * o.m_channels];
+	m_data     = std::make_unique<float[]>(o.m_size * o.m_channels);
 	m_size     = o.m_size;
 	m_channels = o.m_channels;
 	m_viewing  = o.m_viewing;
 
-	std::copy(o.m_data, o.m_data + (o.m_size * o.m_channels), m_data);
+	std::copy(o.m_data.get(), o.m_data.get() + (o.m_size * o.m_channels), m_data.get());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -298,7 +295,7 @@ void AudioBuffer::forEachChannel(int frame, std::function<void(float&, int)> f)
 void AudioBuffer::forEachSample(std::function<void(float&, int)> f)
 {
 	for (int i = 0; i < countSamples(); i++)
-		f(m_data[i], i);
+		f(m_data.get()[i], i);
 }
 
 /* -------------------------------------------------------------------------- */
