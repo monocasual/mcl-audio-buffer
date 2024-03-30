@@ -28,6 +28,9 @@ void testCopy(AudioBuffer& a, AudioBuffer& b)
 void testMove(AudioBuffer& a, AudioBuffer& b, int sourceBufferSize, int sourceNumChannels)
 {
 	REQUIRE(b.isAllocd() == false);
+	REQUIRE(b.countFrames() == 0);
+	REQUIRE(b.countSamples() == 0);
+	REQUIRE(b.countChannels() == 0);
 
 	REQUIRE(a.isAllocd() == true);
 	REQUIRE(a.countFrames() == sourceBufferSize);
