@@ -102,23 +102,31 @@ TEST_CASE("AudioBuffer")
 
 	SECTION("test move")
 	{
-		AudioBuffer other(BUFFER_SIZE, 2); // Filled with 0.0f's by default
+		constexpr int numChannels = 2;
 
-		other = std::move(buffer);
+		AudioBuffer a(BUFFER_SIZE, numChannels); // Filled with 0.0f's by default
+		AudioBuffer b(BUFFER_SIZE, numChannels);
 
-		REQUIRE(buffer.isAllocd() == false);
-		REQUIRE(buffer.countFrames() == 0);
-		REQUIRE(buffer.countSamples() == 0);
-		REQUIRE(buffer.countChannels() == 0);
+		fillBufferWithData(b);
 
-		REQUIRE(other.isAllocd() == true);
-		REQUIRE(other.countFrames() == BUFFER_SIZE);
-		REQUIRE(other.countSamples() == BUFFER_SIZE * 2);
-		REQUIRE(other.countChannels() == 2);
+		SECTION("with move assignment")
+		{
+			a = std::move(b);
 
-		other.forEachFrame([](float* channels, int numFrame) {
-			REQUIRE(channels[0] == static_cast<float>(numFrame));
-			REQUIRE(channels[1] == static_cast<float>(numFrame));
-		});
+			REQUIRE(b.isAllocd() == false);
+			REQUIRE(b.countFrames() == 0);
+			REQUIRE(b.countSamples() == 0);
+			REQUIRE(b.countChannels() == 0);
+
+			REQUIRE(a.isAllocd() == true);
+			REQUIRE(a.countFrames() == BUFFER_SIZE);
+			REQUIRE(a.countSamples() == BUFFER_SIZE * numChannels);
+			REQUIRE(a.countChannels() == numChannels);
+
+			a.forEachFrame([](float* channels, int numFrame) {
+				REQUIRE(channels[0] == static_cast<float>(numFrame));
+				REQUIRE(channels[1] == static_cast<float>(numFrame));
+			});
+		}
 	}
 }
