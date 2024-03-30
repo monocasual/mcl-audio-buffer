@@ -7,9 +7,6 @@ TEST_CASE("AudioBuffer")
 
 	static const int BUFFER_SIZE = 4096;
 
-	/* Each SECTION the TEST_CASE is executed from the start. Any code between 
-	this comment and the first SECTION macro is exectuted before each SECTION. */
-
 	AudioBuffer buffer;
 	buffer.alloc(BUFFER_SIZE, 2);
 
