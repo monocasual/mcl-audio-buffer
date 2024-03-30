@@ -1,5 +1,6 @@
 #include "src/audioBuffer.hpp"
 #include <catch2/catch_test_macros.hpp>
+#include <iostream>
 
 TEST_CASE("AudioBuffer")
 {
@@ -9,6 +10,12 @@ TEST_CASE("AudioBuffer")
 
 	AudioBuffer buffer;
 	buffer.alloc(BUFFER_SIZE, 2);
+
+	/* Fill it with fake data 0...BUFFERSIZE-1 */
+	buffer.forEachFrame([](float* channels, int numFrame) {
+		channels[0] = static_cast<float>(numFrame);
+		channels[1] = static_cast<float>(numFrame);
+	});
 
 	SECTION("test allocation")
 	{
@@ -61,19 +68,15 @@ TEST_CASE("AudioBuffer")
 	{
 		AudioBuffer other(BUFFER_SIZE, 2);
 
-		for (int i = 0; i < other.countFrames(); i++)
-			for (int k = 0; k < other.countChannels(); k++)
-				other[i][k] = (float)i;
-
 		SECTION("test full copy")
 		{
-			buffer.set(other, 1.0f);
+			other.set(buffer, 1.0f);
 
-			REQUIRE(buffer[0][0] == 0.0f);
-			REQUIRE(buffer[16][0] == 16.0f);
-			REQUIRE(buffer[128][0] == 128.0f);
-			REQUIRE(buffer[1024][0] == 1024.0f);
-			REQUIRE(buffer[BUFFER_SIZE - 1][0] == (float)BUFFER_SIZE - 1);
+			REQUIRE(other[0][0] == 0.0f);
+			REQUIRE(other[16][0] == 16.0f);
+			REQUIRE(other[128][0] == 128.0f);
+			REQUIRE(other[1024][0] == 1024.0f);
+			REQUIRE(other[BUFFER_SIZE - 1][0] == static_cast<float>(BUFFER_SIZE - 1));
 		}
 	}
 }
