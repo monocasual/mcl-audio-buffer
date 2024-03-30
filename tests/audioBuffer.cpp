@@ -1,10 +1,9 @@
-#include "../src/core/audioBuffer.h"
-#include <catch2/catch.hpp>
-#include <memory>
+#include "src/audioBuffer.hpp"
+#include <catch2/catch_test_macros.hpp>
 
 TEST_CASE("AudioBuffer")
 {
-	using namespace giada::m;
+	using namespace mcl;
 
 	static const int BUFFER_SIZE = 4096;
 
