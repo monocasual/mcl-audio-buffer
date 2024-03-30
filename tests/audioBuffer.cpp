@@ -104,13 +104,37 @@ TEST_CASE("AudioBuffer")
 	{
 		constexpr int numChannels = 2;
 
-		AudioBuffer a(BUFFER_SIZE, numChannels); // Filled with 0.0f's by default
-		AudioBuffer b(BUFFER_SIZE, numChannels);
+		SECTION("with move operator")
+		{
+			AudioBuffer b(BUFFER_SIZE, numChannels); // Filled with 0.0f's by default
+			fillBufferWithData(b);
 
-		fillBufferWithData(b);
+			AudioBuffer a(std::move(b));
+
+			REQUIRE(b.isAllocd() == false);
+			REQUIRE(b.countFrames() == 0);
+			REQUIRE(b.countSamples() == 0);
+			REQUIRE(b.countChannels() == 0);
+
+			REQUIRE(a.isAllocd() == true);
+			REQUIRE(a.countFrames() == BUFFER_SIZE);
+			REQUIRE(a.countSamples() == BUFFER_SIZE * numChannels);
+			REQUIRE(a.countChannels() == numChannels);
+
+			a.forEachFrame([](float* channels, int numFrame) {
+				REQUIRE(channels[0] == static_cast<float>(numFrame));
+				REQUIRE(channels[1] == static_cast<float>(numFrame));
+			});
+		}
 
 		SECTION("with move assignment")
 		{
+
+			AudioBuffer a(BUFFER_SIZE, numChannels); // Filled with 0.0f's by default
+			AudioBuffer b(BUFFER_SIZE, numChannels);
+
+			fillBufferWithData(b);
+
 			a = std::move(b);
 
 			REQUIRE(b.isAllocd() == false);
