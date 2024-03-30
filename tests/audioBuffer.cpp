@@ -93,10 +93,23 @@ TEST_CASE("AudioBuffer")
 
 	SECTION("test copy")
 	{
-		AudioBuffer other(BUFFER_SIZE, 2);
+		constexpr int numChannels = 2;
 
 		SECTION("test full copy with copy constructor")
 		{
+			AudioBuffer other(buffer);
+
+			REQUIRE(other[0][0] == 0.0f);
+			REQUIRE(other[16][0] == 16.0f);
+			REQUIRE(other[128][0] == 128.0f);
+			REQUIRE(other[1024][0] == 1024.0f);
+			REQUIRE(other[BUFFER_SIZE - 1][0] == static_cast<float>(BUFFER_SIZE - 1));
+		}
+
+		SECTION("test full copy with copy assignment")
+		{
+			AudioBuffer other(BUFFER_SIZE, numChannels);
+
 			other = buffer;
 
 			REQUIRE(other[0][0] == 0.0f);
@@ -108,6 +121,8 @@ TEST_CASE("AudioBuffer")
 
 		SECTION("test full copy with set()")
 		{
+			AudioBuffer other(BUFFER_SIZE, numChannels);
+
 			other.set(buffer, 1.0f);
 
 			REQUIRE(other[0][0] == 0.0f);
