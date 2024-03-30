@@ -68,7 +68,18 @@ TEST_CASE("AudioBuffer")
 	{
 		AudioBuffer other(BUFFER_SIZE, 2);
 
-		SECTION("test full copy")
+		SECTION("test full copy with copy constructor")
+		{
+			other = buffer;
+
+			REQUIRE(other[0][0] == 0.0f);
+			REQUIRE(other[16][0] == 16.0f);
+			REQUIRE(other[128][0] == 128.0f);
+			REQUIRE(other[1024][0] == 1024.0f);
+			REQUIRE(other[BUFFER_SIZE - 1][0] == static_cast<float>(BUFFER_SIZE - 1));
+		}
+
+		SECTION("test full copy with set()")
 		{
 			other.set(buffer, 1.0f);
 
@@ -78,5 +89,27 @@ TEST_CASE("AudioBuffer")
 			REQUIRE(other[1024][0] == 1024.0f);
 			REQUIRE(other[BUFFER_SIZE - 1][0] == static_cast<float>(BUFFER_SIZE - 1));
 		}
+	}
+
+	SECTION("test move")
+	{
+		AudioBuffer other(BUFFER_SIZE, 2); // Filled with 0.0f's by default
+
+		other = std::move(buffer);
+
+		REQUIRE(buffer.isAllocd() == false);
+		REQUIRE(buffer.countFrames() == 0);
+		REQUIRE(buffer.countSamples() == 0);
+		REQUIRE(buffer.countChannels() == 0);
+
+		REQUIRE(other.isAllocd() == true);
+		REQUIRE(other.countFrames() == BUFFER_SIZE);
+		REQUIRE(other.countSamples() == BUFFER_SIZE * 2);
+		REQUIRE(other.countChannels() == 2);
+
+		other.forEachFrame([](float* channels, int numFrame) {
+			REQUIRE(channels[0] == static_cast<float>(numFrame));
+			REQUIRE(channels[1] == static_cast<float>(numFrame));
+		});
 	}
 }
