@@ -2,20 +2,29 @@
 #include <catch2/catch_test_macros.hpp>
 #include <iostream>
 
+using namespace mcl;
+
+/* 
+fillBufferWithData
+Fill AudioBuffer with fake data 0...b.countFrames() - 1 */
+
+void fillBufferWithData(AudioBuffer& b)
+{
+	b.forEachFrame([](float* channels, int numFrame) {
+		channels[0] = static_cast<float>(numFrame);
+		channels[1] = static_cast<float>(numFrame);
+	});
+}
+
 TEST_CASE("AudioBuffer")
 {
-	using namespace mcl;
 
 	static const int BUFFER_SIZE = 4096;
 
 	AudioBuffer buffer;
 	buffer.alloc(BUFFER_SIZE, 2);
 
-	/* Fill it with fake data 0...BUFFERSIZE-1 */
-	buffer.forEachFrame([](float* channels, int numFrame) {
-		channels[0] = static_cast<float>(numFrame);
-		channels[1] = static_cast<float>(numFrame);
-	});
+	fillBufferWithData(buffer);
 
 	SECTION("test allocation")
 	{
