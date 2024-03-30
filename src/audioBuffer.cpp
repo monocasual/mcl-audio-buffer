@@ -66,13 +66,6 @@ AudioBuffer::AudioBuffer(const AudioBuffer& o)
 
 /* -------------------------------------------------------------------------- */
 
-AudioBuffer::AudioBuffer(AudioBuffer&& o) noexcept
-{
-	move(std::move(o));
-}
-
-/* -------------------------------------------------------------------------- */
-
 AudioBuffer::~AudioBuffer()
 {
 	if (!m_viewing)
@@ -86,16 +79,6 @@ AudioBuffer& AudioBuffer::operator=(const AudioBuffer& o)
 	if (this == &o)
 		return *this;
 	copy(o);
-	return *this;
-}
-
-/* -------------------------------------------------------------------------- */
-
-AudioBuffer& AudioBuffer::operator=(AudioBuffer&& o) noexcept
-{
-	if (this == &o)
-		return *this;
-	move(std::move(o));
 	return *this;
 }
 
@@ -242,23 +225,6 @@ void AudioBuffer::applyGain(float g, int a, int b)
 
 void AudioBuffer::sum(int f, int channel, float val) { (*this)[f][channel] += val; }
 void AudioBuffer::set(int f, int channel, float val) { (*this)[f][channel] = val; }
-
-/* -------------------------------------------------------------------------- */
-
-void AudioBuffer::move(AudioBuffer&& o)
-{
-	assert(o.countChannels() <= NUM_CHANS);
-
-	m_data     = std::move(o.m_data);
-	m_size     = o.m_size;
-	m_channels = o.m_channels;
-	m_viewing  = o.m_viewing;
-
-	o.m_data     = nullptr;
-	o.m_size     = 0;
-	o.m_channels = 0;
-	o.m_viewing  = false;
-}
 
 /* -------------------------------------------------------------------------- */
 

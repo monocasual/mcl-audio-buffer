@@ -69,7 +69,7 @@ public:
 	/* AudioBuffer(AudioBuffer&&)
 	Move constructor. */
 
-	AudioBuffer(AudioBuffer&& o) noexcept;
+	AudioBuffer(AudioBuffer&& o) noexcept = default;
 
 	/* ~AudioBuffer
 	Destructor. */
@@ -84,7 +84,7 @@ public:
 	/* operator = (AudioBuffer&& o)
 	Move assignment operator. */
 
-	AudioBuffer& operator=(AudioBuffer&& o) noexcept;
+	AudioBuffer& operator=(AudioBuffer&& o) noexcept = default;
 
 	/* operator []
 	Given a frame 'offset', returns a pointer to it. This is useful for digging 
@@ -168,7 +168,6 @@ private:
 	    int srcOffset = 0, int destOffset = 0, float gain = 1.0f,
 	    Pan pan = {1.0f, 1.0f});
 
-	void move(AudioBuffer&& o);
 	void copy(const AudioBuffer& o);
 	void sum(int f, int channel, float val);
 	void set(int f, int channel, float val);
