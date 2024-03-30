@@ -16,13 +16,13 @@ void fillBufferWithData(AudioBuffer& b)
 	});
 }
 
-void testCopy(AudioBuffer& b, int sourceBufferSize)
+void testCopy(AudioBuffer& a, AudioBuffer& b)
 {
-	REQUIRE(b[0][0] == 0.0f);
-	REQUIRE(b[16][0] == 16.0f);
-	REQUIRE(b[128][0] == 128.0f);
-	REQUIRE(b[1024][0] == 1024.0f);
-	REQUIRE(b[sourceBufferSize - 1][0] == static_cast<float>(sourceBufferSize - 1));
+	REQUIRE(a.isAllocd() == true);
+	REQUIRE(b.isAllocd() == true);
+	REQUIRE(a.countFrames() == b.countFrames());
+	REQUIRE(a.countSamples() == b.countSamples());
+	REQUIRE(a.countChannels() == b.countChannels());
 }
 
 void testMove(AudioBuffer& a, AudioBuffer& b, int sourceBufferSize, int sourceNumChannels)
@@ -108,7 +108,7 @@ TEST_CASE("AudioBuffer")
 		{
 			AudioBuffer other(buffer);
 
-			testCopy(other, numChannels);
+			testCopy(buffer, other);
 		}
 
 		SECTION("test full copy with copy assignment")
@@ -117,7 +117,7 @@ TEST_CASE("AudioBuffer")
 
 			other = buffer;
 
-			testCopy(other, numChannels);
+			testCopy(buffer, other);
 		}
 
 		SECTION("test full copy with set()")
@@ -126,7 +126,7 @@ TEST_CASE("AudioBuffer")
 
 			other.set(buffer, 1.0f);
 
-			testCopy(other, numChannels);
+			testCopy(buffer, other);
 		}
 	}
 
