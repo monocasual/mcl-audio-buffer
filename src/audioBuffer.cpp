@@ -66,7 +66,7 @@ AudioBuffer::AudioBuffer(const AudioBuffer& o)
 
 /* -------------------------------------------------------------------------- */
 
-AudioBuffer::AudioBuffer(AudioBuffer&& o)
+AudioBuffer::AudioBuffer(AudioBuffer&& o) noexcept
 {
 	move(std::move(o));
 }
@@ -91,7 +91,7 @@ AudioBuffer& AudioBuffer::operator=(const AudioBuffer& o)
 
 /* -------------------------------------------------------------------------- */
 
-AudioBuffer& AudioBuffer::operator=(AudioBuffer&& o)
+AudioBuffer& AudioBuffer::operator=(AudioBuffer&& o) noexcept
 {
 	if (this == &o)
 		return *this;

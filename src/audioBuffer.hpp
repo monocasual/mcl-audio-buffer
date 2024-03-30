@@ -68,7 +68,7 @@ public:
 	/* AudioBuffer(AudioBuffer&&)
 	Move constructor. */
 
-	AudioBuffer(AudioBuffer&& o);
+	AudioBuffer(AudioBuffer&& o) noexcept;
 
 	/* ~AudioBuffer
 	Destructor. */
@@ -83,7 +83,7 @@ public:
 	/* operator = (AudioBuffer&& o)
 	Move assignment operator. */
 
-	AudioBuffer& operator=(AudioBuffer&& o);
+	AudioBuffer& operator=(AudioBuffer&& o) noexcept;
 
 	/* operator []
 	Given a frame 'offset', returns a pointer to it. This is useful for digging 
