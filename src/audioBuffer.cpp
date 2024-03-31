@@ -75,8 +75,7 @@ AudioBuffer::AudioBuffer(AudioBuffer&& o) noexcept
 
 AudioBuffer::~AudioBuffer()
 {
-	if (!m_viewing)
-		free();
+	free();
 }
 
 /* -------------------------------------------------------------------------- */
@@ -155,7 +154,11 @@ void AudioBuffer::alloc(int size, int channels)
 
 void AudioBuffer::free()
 {
-	m_data.reset();
+	if (m_viewing)
+		m_data.release();
+	else
+		m_data.reset();
+
 	m_size     = 0;
 	m_channels = 0;
 	m_viewing  = false;
