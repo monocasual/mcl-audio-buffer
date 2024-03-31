@@ -157,4 +157,13 @@ TEST_CASE("AudioBuffer")
 			testMove(a, b, BUFFER_SIZE, numChannels);
 		}
 	}
+
+	SECTION("test view")
+	{
+		constexpr int bufferSize  = 1024;
+		constexpr int numChannels = 1;
+
+		std::unique_ptr<float[]> raw = std::make_unique<float[]>(bufferSize);
+		AudioBuffer              buf(raw.get(), bufferSize, numChannels);
+	}
 }
