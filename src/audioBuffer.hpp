@@ -107,7 +107,7 @@ public:
 	/* getPeak
 	Returns the highest value from the specified channel. */
 
-	float getPeak(int channel) const;
+	float getPeak(int channel, int a = 0, int b = -1) const;
 
 	void alloc(int size, int channels);
 	void free();
