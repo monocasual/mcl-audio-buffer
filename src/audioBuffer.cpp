@@ -131,8 +131,8 @@ float AudioBuffer::getPeak(int channel, int a, int b) const
 {
 	assert(channel < m_channels);
 	assert(a >= 0);
-	assert(b != -1 || a < b);
-	assert(b != -1 || b <= countFrames());
+	assert(b == -1 || a < b);
+	assert(b == -1 || b <= countFrames());
 
 	if (b == -1)
 		b = countFrames();
