@@ -4,16 +4,15 @@
 
 using namespace mcl;
 
-/* 
+/*
 fillBufferWithData
 Fill AudioBuffer with fake data 0...b.countFrames() - 1 */
 
 void fillBufferWithData(AudioBuffer& b)
 {
-	b.forEachFrame([](float* channels, int numFrame) {
-		channels[0] = static_cast<float>(numFrame);
-		channels[1] = static_cast<float>(numFrame);
-	});
+	for (int i = 0; i < b.countFrames(); i++)
+		for (int k = 0; k < b.countChannels(); k++)
+			b[i][k] = static_cast<float>(i);
 }
 
 void testCopy(AudioBuffer& a, AudioBuffer& b)
@@ -37,10 +36,9 @@ void testMove(AudioBuffer& a, AudioBuffer& b, int sourceBufferSize, int sourceNu
 	REQUIRE(a.countSamples() == sourceBufferSize * sourceNumChannels);
 	REQUIRE(a.countChannels() == sourceNumChannels);
 
-	a.forEachFrame([](float* channels, int numFrame) {
-		REQUIRE(channels[0] == static_cast<float>(numFrame));
-		REQUIRE(channels[1] == static_cast<float>(numFrame));
-	});
+	for (int i = 0; i < a.countFrames(); i++)
+		for (int k = 0; k < a.countChannels(); k++)
+			REQUIRE(a[i][k] == static_cast<float>(i));
 }
 
 TEST_CASE("AudioBuffer")
