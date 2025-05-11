@@ -214,10 +214,12 @@ void AudioBuffer::copyData(const AudioBuffer& b, int framesToCopy,
 		for (int ch = 0; ch < destChannels && ch < srcChannels; ch++)
 		{
 			const float panLevel = ch < 2 ? pan[ch] : 1.0f; // pan for more than 2 channels is not supported
+			const float value    = b[srcF][ch] * gain * panLevel;
+
 			if constexpr (O == Operation::SUM)
-				sum(destF + destOffset, ch, b[srcF][ch] * gain * panLevel);
+				sum(destF + destOffset, ch, value);
 			else
-				set(destF + destOffset, ch, b[srcF][ch] * gain * panLevel);
+				set(destF + destOffset, ch, value);
 		}
 	}
 }
