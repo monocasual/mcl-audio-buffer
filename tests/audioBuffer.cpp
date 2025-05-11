@@ -164,4 +164,47 @@ TEST_CASE("AudioBuffer")
 		std::unique_ptr<float[]> raw = std::make_unique<float[]>(bufferSize);
 		AudioBuffer              buf(raw.get(), bufferSize, numChannels);
 	}
+
+	SECTION("test with different channel layout")
+	{
+		SECTION("test with other buffer with more channels")
+		{
+			AudioBuffer other;
+			other.alloc(BUFFER_SIZE, 6);
+
+			for (int i = 0; i < other.countFrames(); i++)
+				for (int k = 0; k < other.countChannels(); k++)
+					other[i][k] = static_cast<float>(i * 6);
+
+			SECTION("test set")
+			{
+				buffer.set(other, /*gain=*/1.0, /*pan=*/{1.0, 1.0});
+
+				for (int i = 0; i < buffer.countFrames(); i++)
+					for (int k = 0; k < buffer.countChannels(); k++)
+						REQUIRE(buffer[i][k] == static_cast<float>(i * 6));
+			}
+		}
+
+		SECTION("test with other buffer with less channels")
+		{
+			AudioBuffer other;
+			other.alloc(BUFFER_SIZE, 1);
+
+			for (int i = 0; i < other.countFrames(); i++)
+				for (int k = 0; k < other.countChannels(); k++)
+					other[i][k] = static_cast<float>(i * 6);
+
+			SECTION("test set")
+			{
+				buffer.set(other, /*gain=*/1.0, /*pan=*/{1.0, 1.0});
+
+				for (int i = 0; i < buffer.countFrames(); i++)
+				{
+					REQUIRE(buffer[i][0] == static_cast<float>(i * 6));
+					REQUIRE(buffer[i][1] == static_cast<float>(i));
+				}
+			}
+		}
+	}
 }
