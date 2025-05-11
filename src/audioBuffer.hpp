@@ -34,16 +34,15 @@
 namespace mcl
 {
 /* AudioBuffer
-A class that holds a buffer filled with audio data. NOTE: currently it only
-supports 2 channels (stereo). Give it a mono stream and it will convert it to
-stereo. Give it a multichannel stream and it will throw an assertion. */
+A class that holds a buffer filled with audio data. */
 
 class AudioBuffer
 {
 public:
-	static constexpr int NUM_CHANS = 2;
+	/* Pan
+	Currently only for stereo buffers. */
 
-	using Pan = std::array<float, NUM_CHANS>;
+	using Pan = std::array<float, 2>;
 
 	/* AudioBuffer (1)
 	Creates an empty (and invalid) audio buffer. */

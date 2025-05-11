@@ -54,7 +54,6 @@ AudioBuffer::AudioBuffer(float* data, int size, int channels)
 , m_channels(channels)
 , m_viewing(true)
 {
-	assert(channels <= NUM_CHANS);
 }
 
 /* -------------------------------------------------------------------------- */
@@ -147,8 +146,6 @@ float AudioBuffer::getPeak(int channel, int a, int b) const
 
 void AudioBuffer::alloc(int size, int channels)
 {
-	assert(channels <= NUM_CHANS);
-
 	free();
 	m_size     = size;
 	m_channels = channels;
@@ -256,8 +253,6 @@ void AudioBuffer::set(int f, int channel, float val) { (*this)[f][channel] = val
 
 void AudioBuffer::move(AudioBuffer&& o)
 {
-	assert(o.countChannels() <= NUM_CHANS);
-
 	m_data     = std::move(o.m_data);
 	m_size     = o.m_size;
 	m_channels = o.m_channels;
