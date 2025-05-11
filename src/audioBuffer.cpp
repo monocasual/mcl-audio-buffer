@@ -191,6 +191,16 @@ void AudioBuffer::set(const AudioBuffer& b, float gain, Pan pan)
 	copyData<Operation::SET>(b, -1, 0, 0, gain, pan);
 }
 
+void AudioBuffer::sum(const AudioBuffer& b, const MergeInfo& info)
+{
+	copyData<Operation::SUM>(b, info.framesToCopy, info.srcOffset, info.destOffset, info.gain, info.pan);
+}
+
+void AudioBuffer::set(const AudioBuffer& b, const MergeInfo& info)
+{
+	copyData<Operation::SET>(b, info.framesToCopy, info.srcOffset, info.destOffset, info.gain, info.pan);
+}
+
 /* -------------------------------------------------------------------------- */
 
 template <AudioBuffer::Operation O>

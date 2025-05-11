@@ -44,6 +44,33 @@ public:
 
 	using Pan = std::array<float, 2>;
 
+	/* MergeInfo
+	Information passed to sum() and set() methods below. */
+
+	struct MergeInfo
+	{
+		/* framesToCopy
+		How many frames to copy from the source buffer into this one. -1 means 'all'. */
+
+		int framesToCopy = -1;
+
+		/* srcOffset
+		The frame where starting to read in the source buffer. */
+
+		int srcOffset = 0;
+
+		/* destOffset
+		The frame where starting to write in this buffer. */
+
+		int destOffset = 0;
+
+		/* gain, pan
+		Gain and pan used while copying audio data. */
+
+		float gain = 1.0f;
+		Pan   pan  = {1.0f, 1.0f};
+	};
+
 	/* AudioBuffer (1)
 	Creates an empty (and invalid) audio buffer. */
 
@@ -127,6 +154,12 @@ public:
 
 	void sum(const AudioBuffer& b, float gain = 1.0f, Pan pan = {1.0f, 1.0f});
 	void set(const AudioBuffer& b, float gain = 1.0f, Pan pan = {1.0f, 1.0f});
+
+	/* sum, set (3)
+	Same as sum, set (1), taking a MergeInfo object in input. */
+
+	void sum(const AudioBuffer& b, const MergeInfo&);
+	void set(const AudioBuffer& b, const MergeInfo&);
 
 	/* clear
 	Clears the internal data by setting all bytes to 0.0f. Optional parameters
