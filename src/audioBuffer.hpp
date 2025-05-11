@@ -113,9 +113,8 @@ public:
 
 	/* sum, set (1)
 	Merges (sum) or copies (set) 'framesToCopy' frames of buffer 'b' onto this
-	one. If 'framesToCopy' is -1 the whole buffer will be copied. If 'b' has
-	less channels than this one, they will be spread over the current ones.
-	Buffer 'b' MUST NOT contain more channels than this one. */
+	one. If 'framesToCopy' is -1 the whole buffer will be copied. If this buffer
+	has more channels than 'b', the remaining channels will be left empty. */
 
 	void sum(const AudioBuffer& b, int framesToCopy = -1, int srcOffset = 0,
 	    int destOffset = 0, float gain = 1.0f, Pan pan = {1.0f, 1.0f});

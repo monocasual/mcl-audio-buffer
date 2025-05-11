@@ -197,32 +197,27 @@ template <AudioBuffer::Operation O>
 void AudioBuffer::copyData(const AudioBuffer& b, int framesToCopy,
     int srcOffset, int destOffset, float gain, Pan pan)
 {
-	const int  srcChannels  = b.countChannels();
-	const int  destChannels = countChannels();
-	const bool sameChannels = srcChannels == destChannels;
+	const int srcChannels  = b.countChannels();
+	const int destChannels = countChannels();
 
 	assert(m_data != nullptr);
 	assert(destOffset >= 0 && destOffset < m_size);
-	assert(srcChannels <= destChannels);
 
-	/* Make sure the amount of frames to copy lies within the current buffer 
+	/* Make sure the amount of frames to copy lies within the current buffer
 	size. */
 
 	framesToCopy = framesToCopy == -1 ? b.countFrames() : framesToCopy;
 	framesToCopy = std::min(framesToCopy, m_size - destOffset);
 
-	/* Case 1) source has less channels than this one: brutally spread source's
-	channel 0 over this one (TODO - maybe mixdown source channels first?)
-	   Case 2) source has same amount of channels: copy them 1:1. */
-
 	for (int destF = 0, srcF = srcOffset; destF < framesToCopy && destF < b.countFrames(); destF++, srcF++)
 	{
-		for (int ch = 0; ch < destChannels; ch++)
+		for (int ch = 0; ch < destChannels && ch < srcChannels; ch++)
 		{
+			const float panLevel = ch < 2 ? pan[ch] : 1.0f; // pan for more than 2 channels is not supported
 			if constexpr (O == Operation::SUM)
-				sum(destF + destOffset, ch, b[srcF][sameChannels ? ch : 0] * gain * pan[ch]);
+				sum(destF + destOffset, ch, b[srcF][ch] * gain * panLevel);
 			else
-				set(destF + destOffset, ch, b[srcF][sameChannels ? ch : 0] * gain * pan[ch]);
+				set(destF + destOffset, ch, b[srcF][ch] * gain * panLevel);
 		}
 	}
 }
