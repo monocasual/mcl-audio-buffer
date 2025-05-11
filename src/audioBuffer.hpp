@@ -8,17 +8,17 @@
  *
  * This file is part of AudioBuffer.
  *
- * AudioBuffer is free software: you can redistribute it and/or modify it under 
- * the terms of the GNU General Public License as published by the Free Software 
- * Foundation, either version 3 of the License, or (at your option) any later 
+ * AudioBuffer is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
  * version.
  *
- * AudioBuffer is distributed in the hope that it will be useful, but WITHOUT 
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
- * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more 
+ * AudioBuffer is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE. See the GNU General Public License for more
  * details.
  *
- * You should have received a copy of the GNU General Public License along with 
+ * You should have received a copy of the GNU General Public License along with
  * AudioBuffer. If not, see
  * <http://www.gnu.org/licenses/>.
  *
@@ -86,12 +86,12 @@ public:
 	AudioBuffer& operator=(AudioBuffer&& o) noexcept;
 
 	/* operator []
-	Given a frame 'offset', returns a pointer to it. This is useful for digging 
+	Given a frame 'offset', returns a pointer to it. This is useful for digging
 	inside a frame, i.e. parsing each channel. How to use it:
 
-		for (int k=0; k<buffer->countFrames(), k++)
-			for (int i=0; i<buffer->countChannels(); i++)
-				... buffer[k][i] ...
+	    for (int k=0; k<buffer->countFrames(), k++)
+	        for (int i=0; i<buffer->countChannels(); i++)
+	            ... buffer[k][i] ...
 
 	Also note that buffer[0] will give you a pointer to the whole internal data
 	array. */
@@ -112,9 +112,9 @@ public:
 	void free();
 
 	/* sum, set (1)
-	Merges (sum) or copies (set) 'framesToCopy' frames of buffer 'b' onto this 
-	one. If 'framesToCopy' is -1 the whole buffer will be copied. If 'b' has 
-	less channels than this one, they will be spread over the current ones. 
+	Merges (sum) or copies (set) 'framesToCopy' frames of buffer 'b' onto this
+	one. If 'framesToCopy' is -1 the whole buffer will be copied. If 'b' has
+	less channels than this one, they will be spread over the current ones.
 	Buffer 'b' MUST NOT contain more channels than this one. */
 
 	void sum(const AudioBuffer& b, int framesToCopy = -1, int srcOffset = 0,
