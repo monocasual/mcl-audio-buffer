@@ -178,7 +178,7 @@ TEST_CASE("AudioBuffer")
 
 			SECTION("test set")
 			{
-				buffer.set(other, {-1, 0, 0, 0, 0, /*gain=*/1.0, /*pan=*/{1.0, 1.0}});
+				buffer.set(other, {-1, 0, 0, 0, 0, /*gain=*/1.0});
 
 				for (int i = 0; i < buffer.countFrames(); i++)
 					for (int k = 0; k < buffer.countChannels(); k++)
@@ -197,7 +197,7 @@ TEST_CASE("AudioBuffer")
 
 			SECTION("test set")
 			{
-				buffer.set(other, {-1, 0, 0, 0, 0, /*gain=*/1.0, /*pan=*/{1.0, 1.0}});
+				buffer.set(other, {-1, 0, 0, 0, 0, /*gain=*/1.0});
 
 				for (int i = 0; i < buffer.countFrames(); i++)
 				{

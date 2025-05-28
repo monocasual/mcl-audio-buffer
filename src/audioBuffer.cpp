@@ -172,20 +172,20 @@ void AudioBuffer::free()
 void AudioBuffer::sum(const AudioBuffer& b, OpInfo info)
 {
 	copyData<Operation::SUM>(b, info.framesToCopy, info.srcOffset, info.destOffset,
-	    info.srcChannel, info.destChannel, info.gain, info.pan);
+	    info.srcChannel, info.destChannel, info.gain);
 }
 
 void AudioBuffer::set(const AudioBuffer& b, OpInfo info)
 {
 	copyData<Operation::SET>(b, info.framesToCopy, info.srcOffset, info.destOffset,
-	    info.srcChannel, info.destChannel, info.gain, info.pan);
+	    info.srcChannel, info.destChannel, info.gain);
 }
 
 /* -------------------------------------------------------------------------- */
 
 template <AudioBuffer::Operation O>
 void AudioBuffer::copyData(const AudioBuffer& b, int framesToCopy, int srcOffset,
-    int destOffset, int srcChannel, int destChannel, float gain, Pan pan)
+    int destOffset, int srcChannel, int destChannel, float gain)
 {
 	const int srcChannels  = b.countChannels();
 	const int destChannels = countChannels();
@@ -203,9 +203,7 @@ void AudioBuffer::copyData(const AudioBuffer& b, int framesToCopy, int srcOffset
 	{
 		for (int destCh = destChannel, srcCh = srcChannel; destCh < destChannels && srcCh < srcChannels; destCh++, srcCh++)
 		{
-			const float panLevel = destCh < pan.size() ? pan[destCh] : 1.0f; // pan for more than 2 channels is not supported
-			const float value    = b[srcF][srcCh] * gain * panLevel;
-
+			const float value = b[srcF][srcCh] * gain;
 			if constexpr (O == Operation::SUM)
 				sum(destF + destOffset, destCh, value);
 			else
@@ -291,6 +289,6 @@ void AudioBuffer::forEachSample(std::function<void(float&, int)> f)
 
 /* -------------------------------------------------------------------------- */
 
-template void AudioBuffer::copyData<AudioBuffer::Operation::SUM>(const AudioBuffer&, int, int, int, int, int, float, Pan);
-template void AudioBuffer::copyData<AudioBuffer::Operation::SET>(const AudioBuffer&, int, int, int, int, int, float, Pan);
+template void AudioBuffer::copyData<AudioBuffer::Operation::SUM>(const AudioBuffer&, int, int, int, int, int, float);
+template void AudioBuffer::copyData<AudioBuffer::Operation::SET>(const AudioBuffer&, int, int, int, int, int, float);
 } // namespace mcl

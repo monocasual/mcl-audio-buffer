@@ -39,11 +39,6 @@ A class that holds a buffer filled with audio data. */
 class AudioBuffer
 {
 public:
-	/* Pan
-	Currently only for stereo buffers. */
-
-	using Pan = std::array<float, 2>;
-
 	/* OpInfo
 	Information passed to sum() and set() operations below. */
 
@@ -74,11 +69,10 @@ public:
 
 		int destChannel = 0;
 
-		/* gain, pan
-		Gain and pan used while copying audio data. */
+		/* gain
+		Gain used while copying audio data. */
 
 		float gain = 1.0f;
-		Pan   pan  = {1.0f, 1.0f};
 	};
 
 	/* AudioBuffer (1)
@@ -191,8 +185,7 @@ private:
 
 	template <Operation O = Operation::SET>
 	void copyData(const AudioBuffer& b, int framesToCopy = -1, int srcOffset = 0,
-	    int destOffset = 0, int srcChannel = 0, int destChannel = 0, float gain = 1.0f,
-	    Pan pan = {1.0f, 1.0f});
+	    int destOffset = 0, int srcChannel = 0, int destChannel = 0, float gain = 1.0f);
 
 	void move(AudioBuffer&& o);
 	void copy(const AudioBuffer& o);
