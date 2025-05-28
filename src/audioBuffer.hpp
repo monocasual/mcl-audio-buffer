@@ -138,28 +138,13 @@ public:
 	void alloc(int size, int channels);
 	void free();
 
-	/* sum, set (1)
-	Merges (sum) or copies (set) 'framesToCopy' frames of buffer 'b' onto this
-	one. If 'framesToCopy' is -1 the whole buffer will be copied. If this buffer
-	has more channels than 'b', the remaining channels will be left empty. */
-
-	void sum(const AudioBuffer& b, int framesToCopy = -1, int srcOffset = 0,
-	    int destOffset = 0, float gain = 1.0f, Pan pan = {1.0f, 1.0f});
-	void set(const AudioBuffer& b, int framesToCopy = -1, int srcOffset = 0,
-	    int destOffset = 0, float gain = 1.0f, Pan pan = {1.0f, 1.0f});
-
-	/* sum, set (2)
-	Same as sum, set (1) without boundaries or offsets: it just copies as much
-	as possibile. */
-
-	void sum(const AudioBuffer& b, float gain = 1.0f, Pan pan = {1.0f, 1.0f});
-	void set(const AudioBuffer& b, float gain = 1.0f, Pan pan = {1.0f, 1.0f});
-
 	/* sum, set (3)
-	Same as sum, set (1), taking a OpInfo object in input. */
+	Merges (sum) or copies (set) buffer 'b' onto this one, according to the OpInfo struct.
+	TODO - OpInfo should be optional, but we can't do it at the moment because of a
+	freaking bug on old versions of g++/clang++. */
 
-	void sum(const AudioBuffer& b, const OpInfo&);
-	void set(const AudioBuffer& b, const OpInfo&);
+	void sum(const AudioBuffer& b, OpInfo);
+	void set(const AudioBuffer& b, OpInfo);
 
 	/* clear
 	Clears the internal data by setting all bytes to 0.0f. Optional parameters

@@ -122,7 +122,7 @@ TEST_CASE("AudioBuffer")
 		{
 			AudioBuffer other(BUFFER_SIZE, numChannels);
 
-			other.set(buffer, 1.0f);
+			other.set(buffer, {});
 
 			testCopy(buffer, other);
 		}
@@ -178,7 +178,7 @@ TEST_CASE("AudioBuffer")
 
 			SECTION("test set")
 			{
-				buffer.set(other, /*gain=*/1.0, /*pan=*/{1.0, 1.0});
+				buffer.set(other, {-1, 0, 0, /*gain=*/1.0, /*pan=*/{1.0, 1.0}});
 
 				for (int i = 0; i < buffer.countFrames(); i++)
 					for (int k = 0; k < buffer.countChannels(); k++)
@@ -197,7 +197,7 @@ TEST_CASE("AudioBuffer")
 
 			SECTION("test set")
 			{
-				buffer.set(other, /*gain=*/1.0, /*pan=*/{1.0, 1.0});
+				buffer.set(other, {-1, 0, 0, /*gain=*/1.0, /*pan=*/{1.0, 1.0}});
 
 				for (int i = 0; i < buffer.countFrames(); i++)
 				{

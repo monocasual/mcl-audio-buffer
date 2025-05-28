@@ -169,34 +169,12 @@ void AudioBuffer::free()
 
 /* -------------------------------------------------------------------------- */
 
-void AudioBuffer::sum(const AudioBuffer& b, int framesToCopy, int srcOffset,
-    int destOffset, float gain, Pan pan)
-{
-	copyData<Operation::SUM>(b, framesToCopy, srcOffset, destOffset, gain, pan);
-}
-
-void AudioBuffer::set(const AudioBuffer& b, int framesToCopy, int srcOffset,
-    int destOffset, float gain, Pan pan)
-{
-	copyData<Operation::SET>(b, framesToCopy, srcOffset, destOffset, gain, pan);
-}
-
-void AudioBuffer::sum(const AudioBuffer& b, float gain, Pan pan)
-{
-	copyData<Operation::SUM>(b, -1, 0, 0, gain, pan);
-}
-
-void AudioBuffer::set(const AudioBuffer& b, float gain, Pan pan)
-{
-	copyData<Operation::SET>(b, -1, 0, 0, gain, pan);
-}
-
-void AudioBuffer::sum(const AudioBuffer& b, const OpInfo& info)
+void AudioBuffer::sum(const AudioBuffer& b, OpInfo info)
 {
 	copyData<Operation::SUM>(b, info.framesToCopy, info.srcOffset, info.destOffset, info.gain, info.pan);
 }
 
-void AudioBuffer::set(const AudioBuffer& b, const OpInfo& info)
+void AudioBuffer::set(const AudioBuffer& b, OpInfo info)
 {
 	copyData<Operation::SET>(b, info.framesToCopy, info.srcOffset, info.destOffset, info.gain, info.pan);
 }
