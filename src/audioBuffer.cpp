@@ -192,6 +192,8 @@ void AudioBuffer::copyData(const AudioBuffer& b, int framesToCopy, int srcOffset
 
 	assert(m_data != nullptr);
 	assert(destOffset >= 0 && destOffset < m_size);
+	assert(srcChannel >= 0 && srcChannel < srcChannels);
+	assert(destChannel >= 0 && destChannel < destChannels);
 
 	/* Make sure the amount of frames to copy lies within the current buffer
 	size. */
