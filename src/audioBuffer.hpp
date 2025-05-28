@@ -64,6 +64,16 @@ public:
 
 		int destOffset = 0;
 
+		/* srcChannel
+		The channel within the source buffer to read from. */
+
+		int srcChannel = 0;
+
+		/* destChannel
+		the channel within this buffer to add the samples to. */
+
+		int destChannel = 0;
+
 		/* gain, pan
 		Gain and pan used while copying audio data. */
 
@@ -180,8 +190,8 @@ private:
 	};
 
 	template <Operation O = Operation::SET>
-	void copyData(const AudioBuffer& b, int framesToCopy = -1,
-	    int srcOffset = 0, int destOffset = 0, float gain = 1.0f,
+	void copyData(const AudioBuffer& b, int framesToCopy = -1, int srcOffset = 0,
+	    int destOffset = 0, int srcChannel = 0, int destChannel = 0, float gain = 1.0f,
 	    Pan pan = {1.0f, 1.0f});
 
 	void move(AudioBuffer&& o);
