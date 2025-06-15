@@ -107,22 +107,24 @@ public:
 	void free();
 
 	/* sum, set (1)
-	Merges (sum) or copies (set) 'framesToCopy' frames of buffer 'b' onto this
-	one. If 'framesToCopy' is -1 the whole buffer will be copied. If 'b' has
-	less channels than this one, they will be spread over the current ones.
-	Buffer 'b' MUST NOT contain more channels than this one. */
+	Merges (sum) or copies (set) chunks of data from buffer 'b' onto this one.
+	framesToCopy - how many frames to grab from 'b'
+	srcOffset - the frame offset where to read from 'b'
+	destOffset - the frame offset where to put data read from 'b'
+	srcChannel - the channel within the source buffer to read from
+	destChannel - the channel within this buffer to add the samples to. */
 
 	void sum(const AudioBuffer& b, int framesToCopy = -1, int srcOffset = 0,
-	    int destOffset = 0, float gain = 1.0f);
+	    int destOffset = 0, int srcChannel = 0, int destChannel = 0, float gain = 1.0f);
 	void set(const AudioBuffer& b, int framesToCopy = -1, int srcOffset = 0,
-	    int destOffset = 0, float gain = 1.0f);
+	    int destOffset = 0, int srcChannel = 0, int destChannel = 0, float gain = 1.0f);
 
 	/* sum, set (2)
 	Same as sum, set (1) without boundaries or offsets: it just copies as much
 	as possibile. */
 
-	void sum(const AudioBuffer& b, float gain = 1.0f);
-	void set(const AudioBuffer& b, float gain = 1.0f);
+	void sum(const AudioBuffer& b, int srcChannel, int destChannel, float gain = 1.0f);
+	void set(const AudioBuffer& b, int srcChannel, int destChannel, float gain = 1.0f);
 
 	/* clear
 	Clears the internal data by setting all bytes to 0.0f. Optional parameters
@@ -159,7 +161,8 @@ private:
 
 	template <Operation O = Operation::SET>
 	void copyData(const AudioBuffer& b, int framesToCopy = -1,
-	    int srcOffset = 0, int destOffset = 0, float gain = 1.0f);
+	    int srcOffset = 0, int destOffset = 0, int srcChannel = 0,
+	    int destChannel = 0, float gain = 1.0f);
 
 	void move(AudioBuffer&& o);
 	void copy(const AudioBuffer& o);
