@@ -39,11 +39,6 @@ A class that holds a buffer filled with audio data. */
 class AudioBuffer
 {
 public:
-	/* Pan
-	Currently only for stereo buffers. */
-
-	using Pan = std::array<float, 2>;
-
 	/* AudioBuffer (1)
 	Creates an empty (and invalid) audio buffer. */
 
@@ -118,16 +113,16 @@ public:
 	Buffer 'b' MUST NOT contain more channels than this one. */
 
 	void sum(const AudioBuffer& b, int framesToCopy = -1, int srcOffset = 0,
-	    int destOffset = 0, float gain = 1.0f, Pan pan = {1.0f, 1.0f});
+	    int destOffset = 0, float gain = 1.0f);
 	void set(const AudioBuffer& b, int framesToCopy = -1, int srcOffset = 0,
-	    int destOffset = 0, float gain = 1.0f, Pan pan = {1.0f, 1.0f});
+	    int destOffset = 0, float gain = 1.0f);
 
 	/* sum, set (2)
 	Same as sum, set (1) without boundaries or offsets: it just copies as much
 	as possibile. */
 
-	void sum(const AudioBuffer& b, float gain = 1.0f, Pan pan = {1.0f, 1.0f});
-	void set(const AudioBuffer& b, float gain = 1.0f, Pan pan = {1.0f, 1.0f});
+	void sum(const AudioBuffer& b, float gain = 1.0f);
+	void set(const AudioBuffer& b, float gain = 1.0f);
 
 	/* clear
 	Clears the internal data by setting all bytes to 0.0f. Optional parameters
@@ -164,8 +159,7 @@ private:
 
 	template <Operation O = Operation::SET>
 	void copyData(const AudioBuffer& b, int framesToCopy = -1,
-	    int srcOffset = 0, int destOffset = 0, float gain = 1.0f,
-	    Pan pan = {1.0f, 1.0f});
+	    int srcOffset = 0, int destOffset = 0, float gain = 1.0f);
 
 	void move(AudioBuffer&& o);
 	void copy(const AudioBuffer& o);

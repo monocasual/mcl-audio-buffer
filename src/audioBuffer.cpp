@@ -170,32 +170,32 @@ void AudioBuffer::free()
 /* -------------------------------------------------------------------------- */
 
 void AudioBuffer::sum(const AudioBuffer& b, int framesToCopy, int srcOffset,
-    int destOffset, float gain, Pan pan)
+    int destOffset, float gain)
 {
-	copyData<Operation::SUM>(b, framesToCopy, srcOffset, destOffset, gain, pan);
+	copyData<Operation::SUM>(b, framesToCopy, srcOffset, destOffset, gain);
 }
 
 void AudioBuffer::set(const AudioBuffer& b, int framesToCopy, int srcOffset,
-    int destOffset, float gain, Pan pan)
+    int destOffset, float gain)
 {
-	copyData<Operation::SET>(b, framesToCopy, srcOffset, destOffset, gain, pan);
+	copyData<Operation::SET>(b, framesToCopy, srcOffset, destOffset, gain);
 }
 
-void AudioBuffer::sum(const AudioBuffer& b, float gain, Pan pan)
+void AudioBuffer::sum(const AudioBuffer& b, float gain)
 {
-	copyData<Operation::SUM>(b, -1, 0, 0, gain, pan);
+	copyData<Operation::SUM>(b, -1, 0, 0, gain);
 }
 
-void AudioBuffer::set(const AudioBuffer& b, float gain, Pan pan)
+void AudioBuffer::set(const AudioBuffer& b, float gain)
 {
-	copyData<Operation::SET>(b, -1, 0, 0, gain, pan);
+	copyData<Operation::SET>(b, -1, 0, 0, gain);
 }
 
 /* -------------------------------------------------------------------------- */
 
 template <AudioBuffer::Operation O>
 void AudioBuffer::copyData(const AudioBuffer& b, int framesToCopy,
-    int srcOffset, int destOffset, float gain, Pan pan)
+    int srcOffset, int destOffset, float gain)
 {
 	const int  srcChannels  = b.countChannels();
 	const int  destChannels = countChannels();
@@ -220,9 +220,9 @@ void AudioBuffer::copyData(const AudioBuffer& b, int framesToCopy,
 		for (int ch = 0; ch < destChannels; ch++)
 		{
 			if constexpr (O == Operation::SUM)
-				sum(destF + destOffset, ch, b[srcF][sameChannels ? ch : 0] * gain * pan[ch]);
+				sum(destF + destOffset, ch, b[srcF][sameChannels ? ch : 0] * gain);
 			else
-				set(destF + destOffset, ch, b[srcF][sameChannels ? ch : 0] * gain * pan[ch]);
+				set(destF + destOffset, ch, b[srcF][sameChannels ? ch : 0] * gain);
 		}
 	}
 }
@@ -304,6 +304,6 @@ void AudioBuffer::forEachSample(std::function<void(float&, int)> f)
 
 /* -------------------------------------------------------------------------- */
 
-template void AudioBuffer::copyData<AudioBuffer::Operation::SUM>(const AudioBuffer&, int, int, int, float, Pan);
-template void AudioBuffer::copyData<AudioBuffer::Operation::SET>(const AudioBuffer&, int, int, int, float, Pan);
+template void AudioBuffer::copyData<AudioBuffer::Operation::SUM>(const AudioBuffer&, int, int, int, float);
+template void AudioBuffer::copyData<AudioBuffer::Operation::SET>(const AudioBuffer&, int, int, int, float);
 } // namespace mcl
