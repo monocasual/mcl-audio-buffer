@@ -124,7 +124,7 @@ TEST_CASE("AudioBuffer")
 		{
 			AudioBuffer other(BUFFER_SIZE, numChannels);
 
-			other.set(buffer, 1.0f);
+			other.set(buffer, 0, 0, 1.0f);
 
 			testCopy(buffer, other);
 		}

@@ -170,60 +170,52 @@ void AudioBuffer::free()
 /* -------------------------------------------------------------------------- */
 
 void AudioBuffer::sum(const AudioBuffer& b, int framesToCopy, int srcOffset,
-    int destOffset, float gain)
+    int destOffset, int srcChannel, int destChannel, float gain)
 {
-	copyData<Operation::SUM>(b, framesToCopy, srcOffset, destOffset, gain);
+	copyData<Operation::SUM>(b, framesToCopy, srcOffset, destOffset, srcChannel,
+	    destChannel, gain);
 }
 
 void AudioBuffer::set(const AudioBuffer& b, int framesToCopy, int srcOffset,
-    int destOffset, float gain)
+    int destOffset, int srcChannel, int destChannel, float gain)
 {
-	copyData<Operation::SET>(b, framesToCopy, srcOffset, destOffset, gain);
+	copyData<Operation::SET>(b, framesToCopy, srcOffset, destOffset, srcChannel,
+	    destChannel, gain);
 }
 
-void AudioBuffer::sum(const AudioBuffer& b, float gain)
+void AudioBuffer::sum(const AudioBuffer& b, int srcChannel, int destChannel, float gain)
 {
-	copyData<Operation::SUM>(b, -1, 0, 0, gain);
+	copyData<Operation::SUM>(b, -1, 0, 0, srcChannel, destChannel, gain);
 }
 
-void AudioBuffer::set(const AudioBuffer& b, float gain)
+void AudioBuffer::set(const AudioBuffer& b, int srcChannel, int destChannel, float gain)
 {
-	copyData<Operation::SET>(b, -1, 0, 0, gain);
+	copyData<Operation::SET>(b, -1, 0, 0, srcChannel, destChannel, gain);
 }
 
 /* -------------------------------------------------------------------------- */
 
 template <AudioBuffer::Operation O>
-void AudioBuffer::copyData(const AudioBuffer& b, int framesToCopy,
-    int srcOffset, int destOffset, float gain)
+void AudioBuffer::copyData(const AudioBuffer& b, int framesToCopy, int srcOffset,
+    int destOffset, int srcChannel, int destChannel, float gain)
 {
-	const int  srcChannels  = b.countChannels();
-	const int  destChannels = countChannels();
-	const bool sameChannels = srcChannels == destChannels;
-
 	assert(m_data != nullptr);
 	assert(destOffset >= 0 && destOffset < m_size);
-	assert(srcChannels <= destChannels);
+	assert(srcChannel >= 0 && srcChannel < b.countChannels());
+	assert(destChannel >= 0 && destChannel < countChannels());
 
-	/* Make sure the amount of frames to copy lies within the current buffer 
+	/* Make sure the amount of frames to copy lies within the current buffer
 	size. */
 
 	framesToCopy = framesToCopy == -1 ? b.countFrames() : framesToCopy;
 	framesToCopy = std::min(framesToCopy, m_size - destOffset);
 
-	/* Case 1) source has less channels than this one: brutally spread source's
-	channel 0 over this one (TODO - maybe mixdown source channels first?)
-	   Case 2) source has same amount of channels: copy them 1:1. */
-
 	for (int destF = 0, srcF = srcOffset; destF < framesToCopy && destF < b.countFrames(); destF++, srcF++)
 	{
-		for (int ch = 0; ch < destChannels; ch++)
-		{
-			if constexpr (O == Operation::SUM)
-				sum(destF + destOffset, ch, b[srcF][sameChannels ? ch : 0] * gain);
-			else
-				set(destF + destOffset, ch, b[srcF][sameChannels ? ch : 0] * gain);
-		}
+		if constexpr (O == Operation::SUM)
+			sum(destF + destOffset, destChannel, b[srcF][srcChannel] * gain);
+		else
+			set(destF + destOffset, destChannel, b[srcF][srcChannel] * gain);
 	}
 }
 
@@ -304,6 +296,6 @@ void AudioBuffer::forEachSample(std::function<void(float&, int)> f)
 
 /* -------------------------------------------------------------------------- */
 
-template void AudioBuffer::copyData<AudioBuffer::Operation::SUM>(const AudioBuffer&, int, int, int, float);
-template void AudioBuffer::copyData<AudioBuffer::Operation::SET>(const AudioBuffer&, int, int, int, float);
+template void AudioBuffer::copyData<AudioBuffer::Operation::SUM>(const AudioBuffer&, int, int, int, int, int, float);
+template void AudioBuffer::copyData<AudioBuffer::Operation::SET>(const AudioBuffer&, int, int, int, int, int, float);
 } // namespace mcl
