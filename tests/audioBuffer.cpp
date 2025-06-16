@@ -166,4 +166,53 @@ TEST_CASE("AudioBuffer")
 		std::unique_ptr<float[]> raw = std::make_unique<float[]>(bufferSize);
 		AudioBuffer              buf(raw.get(), bufferSize, numChannels);
 	}
+
+	SECTION("test set")
+	{
+		constexpr int numChannels = 2;
+
+		AudioBuffer src(BUFFER_SIZE, numChannels); // Filled with 0.0f's by default
+		AudioBuffer dest(BUFFER_SIZE, numChannels);
+		fillBufferWithData(src);
+
+		SECTION("total")
+		{
+			dest.set(src, 0, 0);
+			dest.set(src, 1, 1);
+
+			for (int i = 0; i < dest.countFrames(); i++)
+				for (int k = 0; k < dest.countChannels(); k++)
+					REQUIRE(dest[i][k] == static_cast<float>(i));
+		}
+
+		SECTION("partial")
+		{
+			constexpr int framesToCopy = BUFFER_SIZE / 2;
+
+			dest.set(src, framesToCopy, 0, 0, 0, 0);
+			dest.set(src, framesToCopy, 0, 0, 1, 1);
+
+			for (int i = 0; i < dest.countFrames(); i++)
+				for (int k = 0; k < dest.countChannels(); k++)
+					REQUIRE(dest[i][k] == (i < framesToCopy ? static_cast<float>(i) : 0.0f));
+		}
+
+		SECTION("partial with offset")
+		{
+			constexpr int framesToCopy = BUFFER_SIZE / 2;
+			constexpr int offset       = 1;
+
+			dest.set(src, framesToCopy, offset, offset, 0, 0);
+			dest.set(src, framesToCopy, offset, offset, 1, 1);
+
+			for (int i = 0; i < dest.countFrames(); i++)
+				for (int k = 0; k < dest.countChannels(); k++)
+				{
+					if (i == 0)
+						REQUIRE(dest[i][k] == 0.0f);
+					else
+						REQUIRE(dest[i][k] == (i < framesToCopy + offset ? static_cast<float>(i) : 0.0f));
+				}
+		}
+	}
 }
