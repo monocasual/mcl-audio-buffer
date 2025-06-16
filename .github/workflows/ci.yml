@@ -14,7 +14,7 @@ jobs:
           submodules: recursive
 
       - name: Generate Makefile
-        run: cmake -S . -B build/ -G "Unix Makefiles" 
+        run: cmake -S . -B build/ -G "Unix Makefiles"
 
       - name: Build
         run: cmake --build build/ -j 2
