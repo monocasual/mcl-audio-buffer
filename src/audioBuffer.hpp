@@ -114,10 +114,10 @@ public:
 	srcChannel - the channel within the source buffer to read from
 	destChannel - the channel within this buffer to add the samples to. */
 
-	void sum(const AudioBuffer& b, int framesToCopy = -1, int srcOffset = 0,
-	    int destOffset = 0, int srcChannel = 0, int destChannel = 0, float gain = 1.0f);
-	void set(const AudioBuffer& b, int framesToCopy = -1, int srcOffset = 0,
-	    int destOffset = 0, int srcChannel = 0, int destChannel = 0, float gain = 1.0f);
+	void sum(const AudioBuffer& b, int framesToCopy, int srcOffset,
+	    int destOffset, int srcChannel, int destChannel, float gain = 1.0f);
+	void set(const AudioBuffer& b, int framesToCopy, int srcOffset,
+	    int destOffset, int srcChannel, int destChannel, float gain = 1.0f);
 
 	/* sum, set (2)
 	Same as sum, set (1) without boundaries or offsets: it just copies as much
