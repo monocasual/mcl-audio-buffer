@@ -172,31 +172,31 @@ void AudioBuffer::free()
 void AudioBuffer::sum(const AudioBuffer& b, int framesToCopy, int srcOffset,
     int destOffset, int srcChannel, int destChannel, float gain)
 {
-	copyData<Operation::SUM>(b, framesToCopy, srcOffset, destOffset, srcChannel,
+	merge<Operation::SUM>(b, framesToCopy, srcOffset, destOffset, srcChannel,
 	    destChannel, gain);
 }
 
 void AudioBuffer::set(const AudioBuffer& b, int framesToCopy, int srcOffset,
     int destOffset, int srcChannel, int destChannel, float gain)
 {
-	copyData<Operation::SET>(b, framesToCopy, srcOffset, destOffset, srcChannel,
+	merge<Operation::SET>(b, framesToCopy, srcOffset, destOffset, srcChannel,
 	    destChannel, gain);
 }
 
 void AudioBuffer::sum(const AudioBuffer& b, int srcChannel, int destChannel, float gain)
 {
-	copyData<Operation::SUM>(b, -1, 0, 0, srcChannel, destChannel, gain);
+	merge<Operation::SUM>(b, -1, 0, 0, srcChannel, destChannel, gain);
 }
 
 void AudioBuffer::set(const AudioBuffer& b, int srcChannel, int destChannel, float gain)
 {
-	copyData<Operation::SET>(b, -1, 0, 0, srcChannel, destChannel, gain);
+	merge<Operation::SET>(b, -1, 0, 0, srcChannel, destChannel, gain);
 }
 
 /* -------------------------------------------------------------------------- */
 
 template <AudioBuffer::Operation O>
-void AudioBuffer::copyData(const AudioBuffer& b, int framesToCopy, int srcOffset,
+void AudioBuffer::merge(const AudioBuffer& b, int framesToCopy, int srcOffset,
     int destOffset, int srcChannel, int destChannel, float gain)
 {
 	assert(m_data != nullptr);
@@ -296,6 +296,6 @@ void AudioBuffer::forEachSample(std::function<void(float&, int)> f)
 
 /* -------------------------------------------------------------------------- */
 
-template void AudioBuffer::copyData<AudioBuffer::Operation::SUM>(const AudioBuffer&, int, int, int, int, int, float);
-template void AudioBuffer::copyData<AudioBuffer::Operation::SET>(const AudioBuffer&, int, int, int, int, int, float);
+template void AudioBuffer::merge<AudioBuffer::Operation::SUM>(const AudioBuffer&, int, int, int, int, int, float);
+template void AudioBuffer::merge<AudioBuffer::Operation::SET>(const AudioBuffer&, int, int, int, int, int, float);
 } // namespace mcl
