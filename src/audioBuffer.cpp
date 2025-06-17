@@ -144,6 +144,18 @@ float AudioBuffer::getPeak(int channel, int a, int b) const
 
 /* -------------------------------------------------------------------------- */
 
+void AudioBuffer::debug() const
+{
+	for (int i = 0; i < countFrames(); i++)
+	{
+		for (int k = 0; k < countChannels(); k++)
+			printf("%f ", (*this)[i][k]);
+		puts("");
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
 void AudioBuffer::alloc(int size, int channels)
 {
 	free();

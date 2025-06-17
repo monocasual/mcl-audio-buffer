@@ -103,6 +103,8 @@ public:
 
 	float getPeak(int channel, int a = 0, int b = -1) const;
 
+	void debug() const;
+
 	void alloc(int size, int channels);
 	void free();
 
