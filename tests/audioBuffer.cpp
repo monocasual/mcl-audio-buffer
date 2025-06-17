@@ -218,4 +218,21 @@ TEST_CASE("AudioBuffer")
 				}
 		}
 	}
+
+	SECTION("test setAll")
+	{
+		constexpr int numChannels  = 2;
+		constexpr int framesToCopy = BUFFER_SIZE;
+		constexpr int offset       = 0;
+
+		AudioBuffer src(BUFFER_SIZE, numChannels - 1);
+		AudioBuffer dest(BUFFER_SIZE, numChannels); // Empty
+		fillBufferWithData(src);
+
+		dest.setAll(src, framesToCopy, offset, offset);
+
+		for (int i = 0; i < dest.countFrames(); i++)
+			for (int k = 0; k < dest.countChannels(); k++)
+				REQUIRE(dest[i][k] == static_cast<float>(i));
+	}
 }
