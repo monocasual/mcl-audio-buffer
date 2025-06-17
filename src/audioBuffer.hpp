@@ -160,9 +160,8 @@ private:
 	};
 
 	template <Operation O = Operation::SET>
-	void merge(const AudioBuffer& b, int framesToCopy = -1,
-	    int srcOffset = 0, int destOffset = 0, int srcChannel = 0,
-	    int destChannel = 0, float gain = 1.0f);
+	void merge(const AudioBuffer& b, int framesToCopy, int srcOffset, int destOffset,
+	    int srcChannel, int destChannel, float gain);
 
 	void move(AudioBuffer&& o);
 	void copy(const AudioBuffer& o);
