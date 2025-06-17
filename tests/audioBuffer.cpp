@@ -4,16 +4,20 @@
 
 using namespace mcl;
 
-/* 
+/*
 fillBufferWithData
-Fill AudioBuffer with fake data 0...b.countFrames() - 1 */
+Fill AudioBuffer with fake data, like so:
+
+channel 0: 0, 1,   ... b.countFrames() - 1
+channel 1: 1, 2,   ... b.countFrames()
+...
+channel n: n, n+1, ... b.countFrames() + n */
 
 void fillBufferWithData(AudioBuffer& b)
 {
-	b.forEachFrame([](float* channels, int numFrame) {
-		channels[0] = static_cast<float>(numFrame);
-		channels[1] = static_cast<float>(numFrame);
-	});
+	for (int i = 0; i < b.countFrames(); i++)
+		for (int k = 0; k < b.countChannels(); k++)
+			b[i][k] = static_cast<float>(i + k);
 }
 
 void testCopy(AudioBuffer& a, AudioBuffer& b)
@@ -37,10 +41,9 @@ void testMove(AudioBuffer& a, AudioBuffer& b, int sourceBufferSize, int sourceNu
 	REQUIRE(a.countSamples() == sourceBufferSize * sourceNumChannels);
 	REQUIRE(a.countChannels() == sourceNumChannels);
 
-	a.forEachFrame([](float* channels, int numFrame) {
-		REQUIRE(channels[0] == static_cast<float>(numFrame));
-		REQUIRE(channels[1] == static_cast<float>(numFrame));
-	});
+	for (int i = 0; i < a.countFrames(); i++)
+		for (int k = 0; k < a.countChannels(); k++)
+			REQUIRE(a[i][k] == static_cast<float>(i + k));
 }
 
 TEST_CASE("AudioBuffer")
@@ -182,7 +185,7 @@ TEST_CASE("AudioBuffer")
 
 			for (int i = 0; i < dest.countFrames(); i++)
 				for (int k = 0; k < dest.countChannels(); k++)
-					REQUIRE(dest[i][k] == static_cast<float>(i));
+					REQUIRE(dest[i][k] == static_cast<float>(i + k));
 		}
 
 		SECTION("partial")
@@ -194,7 +197,7 @@ TEST_CASE("AudioBuffer")
 
 			for (int i = 0; i < dest.countFrames(); i++)
 				for (int k = 0; k < dest.countChannels(); k++)
-					REQUIRE(dest[i][k] == (i < framesToCopy ? static_cast<float>(i) : 0.0f));
+					REQUIRE(dest[i][k] == (i < framesToCopy ? static_cast<float>(i + k) : 0.0f));
 		}
 
 		SECTION("partial with offset")
@@ -211,7 +214,7 @@ TEST_CASE("AudioBuffer")
 					if (i == 0)
 						REQUIRE(dest[i][k] == 0.0f);
 					else
-						REQUIRE(dest[i][k] == (i < framesToCopy + offset ? static_cast<float>(i) : 0.0f));
+						REQUIRE(dest[i][k] == (i < framesToCopy + offset ? static_cast<float>(i + k) : 0.0f));
 				}
 		}
 	}
