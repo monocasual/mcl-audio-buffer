@@ -27,7 +27,6 @@
 #ifndef MONOCASUAL_AUDIO_BUFFER_H
 #define MONOCASUAL_AUDIO_BUFFER_H
 
-#include <array>
 #include <functional>
 #include <memory>
 
