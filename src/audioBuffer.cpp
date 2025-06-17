@@ -195,6 +195,30 @@ void AudioBuffer::set(const AudioBuffer& b, int srcChannel, int destChannel, flo
 
 /* -------------------------------------------------------------------------- */
 
+void AudioBuffer::sumAll(const AudioBuffer& b, int framesToCopy, int srcOffset, int destOffset,
+    float gain)
+{
+	mergeAll<Operation::SUM>(b, framesToCopy, srcOffset, destOffset, gain);
+}
+
+void AudioBuffer::setAll(const AudioBuffer& b, int framesToCopy, int srcOffset, int destOffset,
+    float gain)
+{
+	mergeAll<Operation::SET>(b, framesToCopy, srcOffset, destOffset, gain);
+}
+
+void AudioBuffer::sumAll(const AudioBuffer& b, float gain)
+{
+	mergeAll<Operation::SUM>(b, b.countFrames(), 0, 0, gain);
+}
+
+void AudioBuffer::setAll(const AudioBuffer& b, float gain)
+{
+	mergeAll<Operation::SET>(b, b.countFrames(), 0, 0, gain);
+}
+
+/* -------------------------------------------------------------------------- */
+
 template <AudioBuffer::Operation O>
 void AudioBuffer::merge(const AudioBuffer& b, int framesToCopy, int srcOffset,
     int destOffset, int srcChannel, int destChannel, float gain)
@@ -216,6 +240,23 @@ void AudioBuffer::merge(const AudioBuffer& b, int framesToCopy, int srcOffset,
 			sum(destF + destOffset, destChannel, b[srcF][srcChannel] * gain);
 		else
 			set(destF + destOffset, destChannel, b[srcF][srcChannel] * gain);
+	}
+}
+
+/* -------------------------------------------------------------------------- */
+
+template <AudioBuffer::Operation O>
+void AudioBuffer::mergeAll(const AudioBuffer& b, int framesToCopy, int srcOffset,
+    int destOffset, float gain)
+{
+	for (int destCh = 0, srcCh = 0; destCh < countChannels(); destCh++, srcCh++)
+	{
+		if (srcCh == b.countChannels())
+			srcCh = 0;
+		if constexpr (O == Operation::SUM)
+			sum(b, framesToCopy, srcOffset, destOffset, srcCh, destCh);
+		else
+			set(b, framesToCopy, srcOffset, destOffset, srcCh, destCh);
 	}
 }
 
@@ -298,4 +339,6 @@ void AudioBuffer::forEachSample(std::function<void(float&, int)> f)
 
 template void AudioBuffer::merge<AudioBuffer::Operation::SUM>(const AudioBuffer&, int, int, int, int, int, float);
 template void AudioBuffer::merge<AudioBuffer::Operation::SET>(const AudioBuffer&, int, int, int, int, int, float);
+template void AudioBuffer::mergeAll<AudioBuffer::Operation::SUM>(const AudioBuffer&, int, int, int, float);
+template void AudioBuffer::mergeAll<AudioBuffer::Operation::SET>(const AudioBuffer&, int, int, int, float);
 } // namespace mcl

@@ -126,6 +126,22 @@ public:
 	void sum(const AudioBuffer& b, int srcChannel, int destChannel, float gain = 1.0f);
 	void set(const AudioBuffer& b, int srcChannel, int destChannel, float gain = 1.0f);
 
+	/* sumAll, setAll (1)
+	Merge or sum all channels of 'b' onto this one. Channels in 'b' are spread
+	over this one in case it has less channels. */
+
+	void sumAll(const AudioBuffer& b, int framesToCopy, int srcOffset, int destOffset,
+	    float gain = 1.0f);
+	void setAll(const AudioBuffer& b, int framesToCopy, int srcOffset, int destOffset,
+	    float gain = 1.0f);
+
+	/* sumAll, setAll (2)
+	Same as sumAll, setAll (1) without boundaries or offsets: it just copies as
+	much as possibile. */
+
+	void sumAll(const AudioBuffer& b, float gain = 1.0f);
+	void setAll(const AudioBuffer& b, float gain = 1.0f);
+
 	/* clear
 	Clears the internal data by setting all bytes to 0.0f. Optional parameters
 	'a' and 'b' set the range. */
@@ -162,6 +178,10 @@ private:
 	template <Operation O = Operation::SET>
 	void merge(const AudioBuffer& b, int framesToCopy, int srcOffset, int destOffset,
 	    int srcChannel, int destChannel, float gain);
+
+	template <Operation O = Operation::SET>
+	void mergeAll(const AudioBuffer& b, int framesToCopy, int srcOffset, int destOffset,
+	    float gain);
 
 	void move(AudioBuffer&& o);
 	void copy(const AudioBuffer& o);
