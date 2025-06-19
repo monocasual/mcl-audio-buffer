@@ -408,9 +408,9 @@ private:
 			if (srcCh == b.countChannels())
 				srcCh = 0;
 			if constexpr (O == Operation::SUM)
-				sum(b, framesToCopy, srcOffset, destOffset, srcCh, destCh);
+				sum(b, framesToCopy, srcOffset, destOffset, srcCh, destCh, gain);
 			else
-				set(b, framesToCopy, srcOffset, destOffset, srcCh, destCh);
+				set(b, framesToCopy, srcOffset, destOffset, srcCh, destCh, gain);
 		}
 	}
 
