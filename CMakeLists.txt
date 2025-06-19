@@ -8,6 +8,14 @@ add_executable(tests
 target_include_directories(tests PRIVATE ${CMAKE_SOURCE_DIR})
 target_compile_features(tests PRIVATE cxx_std_23)
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+	target_compile_options(tests PRIVATE /W4 /bigobj)
+else()
+	target_compile_options(tests PRIVATE
+		-Wall -Wextra -Wpedantic -Wunreachable-code -Wcast-align -Wredundant-decls
+        -Woverloaded-virtual -Wreorder)
+endif()
+
 include(cmake/CPM.cmake)
 
 CPMAddPackage(
