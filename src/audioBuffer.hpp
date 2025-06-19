@@ -43,7 +43,7 @@ public:
 	/* AudioBuffer (1)
 	Creates an empty (and invalid) audio buffer. */
 
-	AudioBuffer()
+	constexpr AudioBuffer()
 	: m_data(nullptr)
 	, m_size(0)
 	, m_channels(0)
@@ -56,7 +56,7 @@ public:
 	/* AudioBuffer (2)
 	Creates an audio buffer and allocates memory for size * channels frames. */
 
-	AudioBuffer(int size, int channels)
+	constexpr AudioBuffer(int size, int channels)
 	: AudioBuffer()
 	{
 		alloc(size, channels);
@@ -68,7 +68,7 @@ public:
 	Creates an audio buffer out of a raw pointer. AudioBuffer created this way
 	is instructed not to free the owned data on destruction. */
 
-	AudioBuffer(float* data, int size, int channels)
+	constexpr AudioBuffer(float* data, int size, int channels)
 	: m_data(data)
 	, m_size(size)
 	, m_channels(channels)
@@ -81,7 +81,7 @@ public:
 	/* AudioBuffer(const AudioBuffer&)
 	Copy constructor. */
 
-	AudioBuffer(const AudioBuffer& o)
+	constexpr AudioBuffer(const AudioBuffer& o)
 	{
 		copy(o);
 	}
@@ -91,7 +91,7 @@ public:
 	/* AudioBuffer(AudioBuffer&&)
 	Move constructor. */
 
-	AudioBuffer(AudioBuffer&& o) noexcept
+	constexpr AudioBuffer(AudioBuffer&& o) noexcept
 	{
 		move(std::move(o));
 	}
@@ -101,7 +101,7 @@ public:
 	/* ~AudioBuffer
 	Destructor. */
 
-	~AudioBuffer()
+	constexpr ~AudioBuffer()
 	{
 		free();
 	}
@@ -111,7 +111,7 @@ public:
 	/* operator = (const AudioBuffer& o)
 	Copy assignment operator. */
 
-	AudioBuffer& operator=(const AudioBuffer& o)
+	constexpr AudioBuffer& operator=(const AudioBuffer& o)
 	{
 		if (this == &o)
 			return *this;
@@ -124,7 +124,7 @@ public:
 	/* operator = (AudioBuffer&& o)
 	Move assignment operator. */
 
-	AudioBuffer& operator=(AudioBuffer&& o) noexcept
+	constexpr AudioBuffer& operator=(AudioBuffer&& o) noexcept
 	{
 		if (this == &o)
 			return *this;
@@ -145,7 +145,7 @@ public:
 	Also note that buffer[0] will give you a pointer to the whole internal data
 	array. */
 
-	float* operator[](int offset) const
+	constexpr float* operator[](int offset) const
 	{
 		assert(m_data != nullptr);
 		assert(offset < m_size);
@@ -154,17 +154,17 @@ public:
 
 	/* ---------------------------------------------------------------------- */
 
-	int  countFrames() const { return m_size; }
-	int  countSamples() const { return m_size * m_channels; }
-	int  countChannels() const { return m_channels; }
-	bool isAllocd() const { return m_data != nullptr; }
+	constexpr int  countFrames() const { return m_size; }
+	constexpr int  countSamples() const { return m_size * m_channels; }
+	constexpr int  countChannels() const { return m_channels; }
+	constexpr bool isAllocd() const { return m_data != nullptr; }
 
 	/* ---------------------------------------------------------------------- */
 
 	/* getPeak
 	Returns the highest value from the specified channel. */
 
-	float getPeak(int channel, int a = 0, int b = -1) const
+	constexpr float getPeak(int channel, int a = 0, int b = -1) const
 	{
 		assert(channel < m_channels);
 		assert(a >= 0);
@@ -182,7 +182,7 @@ public:
 
 	/* ---------------------------------------------------------------------- */
 
-	void debug() const
+	constexpr void debug() const
 	{
 		for (int i = 0; i < countFrames(); i++)
 		{
@@ -194,7 +194,7 @@ public:
 
 	/* ---------------------------------------------------------------------- */
 
-	void alloc(int size, int channels)
+	constexpr void alloc(int size, int channels)
 	{
 		free();
 		m_size     = size;
@@ -205,7 +205,7 @@ public:
 
 	/* ---------------------------------------------------------------------- */
 
-	void free()
+	constexpr void free()
 	{
 		if (m_viewing)
 			m_data.release();
@@ -227,14 +227,14 @@ public:
 	srcChannel - the channel within the source buffer to read from
 	destChannel - the channel within this buffer to add the samples to. */
 
-	void sum(const AudioBuffer& b, int framesToCopy, int srcOffset,
+	constexpr void sum(const AudioBuffer& b, int framesToCopy, int srcOffset,
 	    int destOffset, int srcChannel, int destChannel, float gain = 1.0f)
 	{
 		merge<Operation::SUM>(b, framesToCopy, srcOffset, destOffset, srcChannel,
 		    destChannel, gain);
 	}
 
-	void set(const AudioBuffer& b, int framesToCopy, int srcOffset,
+	constexpr void set(const AudioBuffer& b, int framesToCopy, int srcOffset,
 	    int destOffset, int srcChannel, int destChannel, float gain = 1.0f)
 	{
 		merge<Operation::SET>(b, framesToCopy, srcOffset, destOffset, srcChannel,
@@ -247,14 +247,14 @@ public:
 	Same as sum, set (1) without boundaries or offsets: it just copies as much
 	as possibile. */
 
-	void sum(const AudioBuffer& b, int srcChannel, int destChannel, float gain = 1.0f)
+	constexpr void sum(const AudioBuffer& b, int srcChannel, int destChannel, float gain = 1.0f)
 	{
 		merge<Operation::SUM>(b, -1, 0, 0, srcChannel, destChannel, gain);
 	}
 
 	/* ---------------------------------------------------------------------- */
 
-	void set(const AudioBuffer& b, int srcChannel, int destChannel, float gain = 1.0f)
+	constexpr void set(const AudioBuffer& b, int srcChannel, int destChannel, float gain = 1.0f)
 	{
 		merge<Operation::SET>(b, -1, 0, 0, srcChannel, destChannel, gain);
 	}
@@ -265,13 +265,13 @@ public:
 	Merge or sum all channels of 'b' onto this one. Channels in 'b' are spread
 	over this one in case it has less channels. */
 
-	void sumAll(const AudioBuffer& b, int framesToCopy, int srcOffset, int destOffset,
+	constexpr void sumAll(const AudioBuffer& b, int framesToCopy, int srcOffset, int destOffset,
 	    float gain = 1.0f)
 	{
 		mergeAll<Operation::SUM>(b, framesToCopy, srcOffset, destOffset, gain);
 	}
 
-	void setAll(const AudioBuffer& b, int framesToCopy, int srcOffset, int destOffset,
+	constexpr void setAll(const AudioBuffer& b, int framesToCopy, int srcOffset, int destOffset,
 	    float gain = 1.0f)
 	{
 		mergeAll<Operation::SET>(b, framesToCopy, srcOffset, destOffset, gain);
@@ -283,12 +283,12 @@ public:
 	Same as sumAll, setAll (1) without boundaries or offsets: it just copies as
 	much as possibile. */
 
-	void sumAll(const AudioBuffer& b, float gain = 1.0f)
+	constexpr void sumAll(const AudioBuffer& b, float gain = 1.0f)
 	{
 		mergeAll<Operation::SUM>(b, b.countFrames(), 0, 0, gain);
 	}
 
-	void setAll(const AudioBuffer& b, float gain = 1.0f)
+	constexpr void setAll(const AudioBuffer& b, float gain = 1.0f)
 	{
 		mergeAll<Operation::SET>(b, b.countFrames(), 0, 0, gain);
 	}
@@ -299,7 +299,7 @@ public:
 	Clears the internal data by setting all bytes to 0.0f. Optional parameters
 	'a' and 'b' set the range. */
 
-	void clear(int a = 0, int b = -1)
+	constexpr void clear(int a = 0, int b = -1)
 	{
 		if (m_data == nullptr)
 			return;
@@ -313,7 +313,7 @@ public:
 	/* applyGain
 	Applies gain 'g' to buffer. Optional parameters	'a' and 'b' set the range.*/
 
-	void applyGain(float g, int a = 0, int b = -1)
+	constexpr void applyGain(float g, int a = 0, int b = -1)
 	{
 		assert(a >= 0);
 		assert(b < countSamples());
@@ -373,7 +373,7 @@ private:
 	};
 
 	template <Operation O>
-	void merge(const AudioBuffer& b, int framesToCopy, int srcOffset, int destOffset,
+	constexpr void merge(const AudioBuffer& b, int framesToCopy, int srcOffset, int destOffset,
 	    int srcChannel, int destChannel, float gain)
 	{
 		assert(m_data != nullptr);
@@ -399,7 +399,7 @@ private:
 	/* ---------------------------------------------------------------------- */
 
 	template <Operation O = Operation::SET>
-	void mergeAll(const AudioBuffer& b, int framesToCopy, int srcOffset, int destOffset,
+	constexpr void mergeAll(const AudioBuffer& b, int framesToCopy, int srcOffset, int destOffset,
 	    float gain)
 	{
 		for (int destCh = 0, srcCh = 0; destCh < countChannels(); destCh++, srcCh++)
@@ -415,7 +415,7 @@ private:
 
 	/* ---------------------------------------------------------------------- */
 
-	void move(AudioBuffer&& o)
+	constexpr void move(AudioBuffer&& o)
 	{
 		m_data     = std::exchange(o.m_data, nullptr);
 		m_size     = std::exchange(o.m_size, 0);
@@ -425,7 +425,7 @@ private:
 
 	/* ---------------------------------------------------------------------- */
 
-	void copy(const AudioBuffer& o)
+	constexpr void copy(const AudioBuffer& o)
 	{
 		m_data     = std::make_unique<float[]>(o.m_size * o.m_channels);
 		m_size     = o.m_size;
@@ -437,8 +437,8 @@ private:
 
 	/* ---------------------------------------------------------------------- */
 
-	void sum(int f, int channel, float val) { (*this)[f][channel] += val; }
-	void set(int f, int channel, float val) { (*this)[f][channel] = val; }
+	constexpr void sum(int f, int channel, float val) { (*this)[f][channel] += val; }
+	constexpr void set(int f, int channel, float val) { (*this)[f][channel] = val; }
 
 	std::unique_ptr<float[]> m_data;
 	int                      m_size;
