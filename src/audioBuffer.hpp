@@ -4,7 +4,7 @@
  *
  * -----------------------------------------------------------------------------
  *
- * Copyright (C) 2021 Giovanni A. Zuliani | Monocasual
+ * Copyright (C) 2021-2025 Giovanni A. Zuliani | Monocasual
  *
  * This file is part of AudioBuffer.
  *
