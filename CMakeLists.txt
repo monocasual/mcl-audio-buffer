@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.25)
 project(geompp LANGUAGES CXX)
 
 add_executable(tests 
-    src/audioBuffer.cpp 
+    src/audioBuffer.hpp 
     tests/audioBuffer.cpp)
 target_include_directories(tests PRIVATE ${CMAKE_SOURCE_DIR})
 target_compile_features(tests PRIVATE cxx_std_20)
