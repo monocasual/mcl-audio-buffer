@@ -279,13 +279,13 @@ public:
 	constexpr void sumAll(const AudioBuffer& b, int framesToCopy, int srcOffset, int destOffset,
 	    float gain = 1.0f)
 	{
-		mergeAll<Operation::SUM>(b, framesToCopy, srcOffset, destOffset, gain);
+		mergeAll<Operation::SUM>(b, framesToCopy, srcOffset, destOffset, gain, std::array<float, 0>{});
 	}
 
 	constexpr void setAll(const AudioBuffer& b, int framesToCopy, int srcOffset, int destOffset,
 	    float gain = 1.0f)
 	{
-		mergeAll<Operation::SET>(b, framesToCopy, srcOffset, destOffset, gain);
+		mergeAll<Operation::SET>(b, framesToCopy, srcOffset, destOffset, gain, std::array<float, 0>{});
 	}
 
 	/* ---------------------------------------------------------------------- */
@@ -296,12 +296,31 @@ public:
 
 	constexpr void sumAll(const AudioBuffer& b, float gain = 1.0f)
 	{
-		mergeAll<Operation::SUM>(b, b.countFrames(), 0, 0, gain);
+		mergeAll<Operation::SUM>(b, b.countFrames(), 0, 0, gain, std::array<float, 0>{});
 	}
 
 	constexpr void setAll(const AudioBuffer& b, float gain = 1.0f)
 	{
-		mergeAll<Operation::SET>(b, b.countFrames(), 0, 0, gain);
+		mergeAll<Operation::SET>(b, b.countFrames(), 0, 0, gain, std::array<float, 0>{});
+	}
+
+	/* ---------------------------------------------------------------------- */
+
+	/* sumAll, setAll (2)
+	Same as sumAll, setAll (2) with an extra 'pan' parameter, to apply panning
+	to the destination buffer (aka this one) while merging data. Note: the
+	pan array must have exactly countChannels() element in it. */
+
+	template <std::size_t panSize>
+	constexpr void sumAll(const AudioBuffer& b, std::array<float, panSize> pan, float gain = 1.0f)
+	{
+		mergeAll<Operation::SUM>(b, b.countFrames(), 0, 0, gain, pan);
+	}
+
+	template <std::size_t panSize>
+	constexpr void setAll(const AudioBuffer& b, std::array<float, panSize> pan, float gain = 1.0f)
+	{
+		mergeAll<Operation::SET>(b, b.countFrames(), 0, 0, gain, pan);
 	}
 
 	/* ---------------------------------------------------------------------- */
@@ -409,18 +428,22 @@ private:
 
 	/* ---------------------------------------------------------------------- */
 
-	template <Operation O>
+	template <Operation O, std::size_t PanSize>
 	constexpr void mergeAll(const AudioBuffer& b, int framesToCopy, int srcOffset, int destOffset,
-	    float gain)
+	    float gain, std::array<float, PanSize> pan)
 	{
+		if constexpr (PanSize > 0)
+			assert(pan.size() == countChannels());
+
 		for (int destCh = 0, srcCh = 0; destCh < countChannels(); destCh++, srcCh++)
 		{
 			if (srcCh == b.countChannels())
 				srcCh = 0;
+			const float chanGain = pan.size() == 0 ? gain : gain * pan[destCh];
 			if constexpr (O == Operation::SUM)
-				sum(b, framesToCopy, srcOffset, destOffset, srcCh, destCh, gain);
+				sum(b, framesToCopy, srcOffset, destOffset, srcCh, destCh, chanGain);
 			else
-				set(b, framesToCopy, srcOffset, destOffset, srcCh, destCh, gain);
+				set(b, framesToCopy, srcOffset, destOffset, srcCh, destCh, chanGain);
 		}
 	}
 
