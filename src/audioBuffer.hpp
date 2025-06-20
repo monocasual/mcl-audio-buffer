@@ -220,6 +220,16 @@ public:
 
 	/* ---------------------------------------------------------------------- */
 
+	/* resizeChannels
+	Changes the number of channels. Note: it will free and reallocate data. */
+
+	constexpr void resizeChannels(int newChannels)
+	{
+		alloc(m_size, newChannels);
+	}
+
+	/* ---------------------------------------------------------------------- */
+
 	/* sum, set (1)
 	Merges (sum) or copies (set) chunks of data from buffer 'b' onto this one.
 	framesToCopy - how many frames to grab from 'b'
