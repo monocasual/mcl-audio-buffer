@@ -409,7 +409,7 @@ private:
 
 	/* ---------------------------------------------------------------------- */
 
-	template <Operation O = Operation::SET>
+	template <Operation O>
 	constexpr void mergeAll(const AudioBuffer& b, int framesToCopy, int srcOffset, int destOffset,
 	    float gain)
 	{
