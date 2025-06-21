@@ -28,6 +28,7 @@
 #define MONOCASUAL_AUDIO_BUFFER_H
 
 #include <algorithm>
+#include <array>
 #include <cassert>
 #include <functional>
 #include <memory>
