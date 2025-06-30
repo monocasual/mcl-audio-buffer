@@ -310,7 +310,7 @@ public:
 	/* sumAll, setAll (2)
 	Same as sumAll, setAll (2) with an extra 'pan' parameter, to apply panning
 	to the destination buffer (aka this one) while merging data. Note: the
-	pan array must have exactly countChannels() element in it. */
+	pan array must have exactly b.countChannels() element in it. */
 
 	template <std::size_t panSize>
 	constexpr void sumAll(const AudioBuffer& b, std::array<float, panSize> pan, float gain = 1.0f)
@@ -434,13 +434,13 @@ private:
 	    float gain, std::array<float, PanSize> pan)
 	{
 		if constexpr (PanSize > 0)
-			assert(pan.size() == countChannels());
+			assert(pan.size() == b.countChannels());
 
 		for (int destCh = 0, srcCh = 0; destCh < countChannels(); destCh++, srcCh++)
 		{
 			if (srcCh == b.countChannels())
 				srcCh = 0;
-			const float chanGain = pan.size() == 0 ? gain : gain * pan[destCh];
+			const float chanGain = pan.size() == 0 ? gain : gain * pan[srcCh];
 			if constexpr (O == Operation::SUM)
 				sum(b, framesToCopy, srcOffset, destOffset, srcCh, destCh, chanGain);
 			else
