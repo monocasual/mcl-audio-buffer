@@ -434,7 +434,7 @@ private:
 	    float gain, std::array<float, PanSize> pan)
 	{
 		if constexpr (PanSize > 0)
-			assert(pan.size() == b.countChannels());
+			assert(pan.size() == static_cast<std::size_t>(b.countChannels()));
 
 		for (int destCh = 0, srcCh = 0; destCh < countChannels(); destCh++, srcCh++)
 		{
