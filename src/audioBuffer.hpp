@@ -147,6 +147,7 @@ public:
 	Also note that buffer[0] will give you a pointer to the whole internal data
 	array. */
 
+	[[deprecated]]
 	constexpr float* operator[](int offset) const
 	{
 		assert(m_data != nullptr);
@@ -160,6 +161,55 @@ public:
 	constexpr int  countSamples() const { return m_size * m_channels; }
 	constexpr int  countChannels() const { return m_channels; }
 	constexpr bool isAllocd() const { return m_data != nullptr; }
+
+	/* ---------------------------------------------------------------------- */
+
+	/* at (1)
+	Returns a pointer to the first sample of the given frame. Use this when you
+	want frame-relative access to the channels.
+	Example:
+
+	    buffer.at(frame)[channel] = 0.5f; */
+
+	constexpr float* at(int frame)
+	{
+		assertFrame(frame);
+		return getFramePtr(frame);
+	}
+
+	constexpr const float* at(int frame) const
+	{
+		assertFrame(frame);
+		return getFramePtr(frame);
+	}
+
+	/* at (2)
+	Returns a reference to the sample at the given frame and channel. A reference
+	is used instead of a pointer so the caller can read/write the sample directly,
+	just like with array indexing.
+	Example:
+
+	    buffer.at(frame, channel) = 0.5f; */
+
+	constexpr float& at(int frame, int channel)
+	{
+		assertSample(frame, channel);
+		return getFramePtr(frame)[channel];
+	}
+
+	constexpr const float& at(int frame, int channel) const
+	{
+		assertSample(frame, channel);
+		return getFramePtr(frame)[channel];
+	}
+
+	/* ---------------------------------------------------------------------- */
+
+	/* getData
+	Returns a pointer to the underlying data. */
+
+	constexpr float*       getData() { return m_data.get(); }
+	constexpr const float* getData() const { return m_data.get(); }
 
 	/* ---------------------------------------------------------------------- */
 
@@ -178,7 +228,7 @@ public:
 
 		float peak = 0.0f;
 		for (int i = a; i < b; i++)
-			peak = std::max(peak, (*this)[i][channel]);
+			peak = std::max(peak, at(i, channel));
 		return peak;
 	}
 
@@ -189,7 +239,7 @@ public:
 		for (int i = 0; i < countFrames(); i++)
 		{
 			for (int k = 0; k < countChannels(); k++)
-				printf("%f ", (*this)[i][k]);
+				printf("%f ", at(i, k));
 			puts("");
 		}
 	}
@@ -367,7 +417,7 @@ public:
 	void forEachFrame(std::function<void(float* /*channels*/, int /*numFrame*/)> f)
 	{
 		for (int i = 0; i < countFrames(); i++)
-			f((*this)[i], i);
+			f(at(i), i);
 	}
 
 	/* ---------------------------------------------------------------------- */
@@ -380,7 +430,7 @@ public:
 		assert(frame < m_size);
 
 		for (int i = 0; i < countChannels(); i++)
-			f((*this)[frame][i], i);
+			f(at(frame, i), i);
 	}
 
 	/* ---------------------------------------------------------------------- */
@@ -421,9 +471,9 @@ private:
 		for (int destF = 0, srcF = srcOffset; destF < framesToCopy && destF < b.countFrames(); destF++, srcF++)
 		{
 			if constexpr (O == Operation::SUM)
-				sum(destF + destOffset, destChannel, b[srcF][srcChannel] * gain);
+				sum(destF + destOffset, destChannel, b.at(srcF, srcChannel) * gain);
 			else
-				set(destF + destOffset, destChannel, b[srcF][srcChannel] * gain);
+				set(destF + destOffset, destChannel, b.at(srcF, srcChannel) * gain);
 		}
 	}
 
@@ -472,8 +522,33 @@ private:
 
 	/* ---------------------------------------------------------------------- */
 
-	constexpr void sum(int f, int channel, float val) { (*this)[f][channel] += val; }
-	constexpr void set(int f, int channel, float val) { (*this)[f][channel] = val; }
+	constexpr void sum(int f, int channel, float val) { at(f, channel) += val; }
+	constexpr void set(int f, int channel, float val) { at(f, channel) = val; }
+
+	/* ---------------------------------------------------------------------- */
+
+	constexpr void assertFrame(int frame) const
+	{
+		assert(m_data != nullptr);
+		assert(frame < m_size);
+	}
+
+	/* ---------------------------------------------------------------------- */
+
+	constexpr void assertSample(int frame, int channel) const
+	{
+		assertFrame(frame);
+		assert(channel < m_channels);
+	}
+
+	/* ---------------------------------------------------------------------- */
+
+	constexpr float* getFramePtr(int frame) const
+	{
+		return m_data.get() + (frame * m_channels);
+	}
+
+	/* ---------------------------------------------------------------------- */
 
 	std::unique_ptr<float[]> m_data;
 	int                      m_size;
