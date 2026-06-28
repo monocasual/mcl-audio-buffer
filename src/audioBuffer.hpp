@@ -136,27 +136,6 @@ public:
 
 	/* ---------------------------------------------------------------------- */
 
-	/* operator []
-	Given a frame 'offset', returns a pointer to it. This is useful for digging
-	inside a frame, i.e. parsing each channel. How to use it:
-
-	    for (int k=0; k<buffer->countFrames(), k++)
-	        for (int i=0; i<buffer->countChannels(); i++)
-	            ... buffer[k][i] ...
-
-	Also note that buffer[0] will give you a pointer to the whole internal data
-	array. */
-
-	[[deprecated]]
-	constexpr float* operator[](int offset) const
-	{
-		assert(m_data != nullptr);
-		assert(offset < m_size);
-		return m_data.get() + (offset * m_channels);
-	}
-
-	/* ---------------------------------------------------------------------- */
-
 	constexpr int  countFrames() const { return m_size; }
 	constexpr int  countSamples() const { return m_size * m_channels; }
 	constexpr int  countChannels() const { return m_channels; }
