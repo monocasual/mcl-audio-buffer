@@ -4,7 +4,7 @@
  *
  * -----------------------------------------------------------------------------
  *
- * Copyright (C) 2021-2025 Giovanni A. Zuliani | Monocasual
+ * Copyright (C) 2021-2026 Giovanni A. Zuliani | Monocasual
  *
  * This file is part of AudioBuffer.
  *
@@ -37,7 +37,20 @@
 namespace mcl
 {
 /* AudioBuffer
-A class that holds a buffer filled with audio data. */
+A class that holds a buffer filled with audio data. The buffer uses planar layout:
+samples are grouped by channel, so all frames for channel 0 come first, then all
+frames for channel 1, and so on.
+
+Example with 2 channels and 3 frames:
+    channel 0: [f0, f1, f2]
+    channel 1: [f0, f1, f2]
+
+So the underlying memory order is:
+    [ch0_f0, ch0_f1, ch0_f2, ch1_f0, ch1_f1, ch1_f2]
+
+Access examples:
+    buffer.at(frame, channel) = 0.5f;
+    buffer.at(0, 1) = 1.0f;  // first frame of channel 1 */
 
 class AudioBuffer
 {
@@ -56,7 +69,7 @@ public:
 	/* ---------------------------------------------------------------------- */
 
 	/* AudioBuffer (2)
-	Creates an audio buffer and allocates memory for size * channels frames. */
+	Creates an audio buffer and allocates memory for size * channels samples. */
 
 	constexpr AudioBuffer(int size, int channels)
 	: AudioBuffer()
@@ -67,8 +80,8 @@ public:
 	/* ---------------------------------------------------------------------- */
 
 	/* AudioBuffer (3)
-	Creates an audio buffer out of a raw pointer. AudioBuffer created this way
-	is instructed not to free the owned data on destruction. */
+	Creates a non-owning audio buffer view over raw planar data. The buffer does
+	not take ownership of the provided memory and will not free it on destruction. */
 
 	constexpr AudioBuffer(float* data, int size, int channels)
 	: m_data(data)
@@ -143,26 +156,7 @@ public:
 
 	/* ---------------------------------------------------------------------- */
 
-	/* at (1)
-	Returns a pointer to the first sample of the given frame. Use this when you
-	want frame-relative access to the channels.
-	Example:
-
-	    buffer.at(frame)[channel] = 0.5f; */
-
-	constexpr float* at(int frame)
-	{
-		assertFrame(frame);
-		return getFramePtr(frame);
-	}
-
-	constexpr const float* at(int frame) const
-	{
-		assertFrame(frame);
-		return getFramePtr(frame);
-	}
-
-	/* at (2)
+	/* at
 	Returns a reference to the sample at the given frame and channel. A reference
 	is used instead of a pointer so the caller can read/write the sample directly,
 	just like with array indexing.
@@ -173,13 +167,13 @@ public:
 	constexpr float& at(int frame, int channel)
 	{
 		assertSample(frame, channel);
-		return getFramePtr(frame)[channel];
+		return m_data.get()[channel * m_size + frame];
 	}
 
 	constexpr const float& at(int frame, int channel) const
 	{
 		assertSample(frame, channel);
-		return getFramePtr(frame)[channel];
+		return m_data.get()[channel * m_size + frame];
 	}
 
 	/* ---------------------------------------------------------------------- */
@@ -356,7 +350,7 @@ public:
 	/* ---------------------------------------------------------------------- */
 
 	/* clear
-	Clears the internal data by setting all bytes to 0.0f. Optional parameters
+	Clears the internal data by setting all samples to 0.0f. Optional parameters
 	'a' and 'b' set the range. */
 
 	constexpr void clear(int a = 0, int b = -1)
@@ -365,7 +359,8 @@ public:
 			return;
 		if (b == -1)
 			b = m_size;
-		std::fill_n(m_data.get() + (a * m_channels), (b - a) * m_channels, 0.0);
+		for (int channel = 0; channel < m_channels; ++channel)
+			std::fill_n(m_data.get() + (channel * m_size) + a, b - a, 0.0);
 	}
 
 	/* ---------------------------------------------------------------------- */
@@ -384,8 +379,9 @@ public:
 			assert(a < b);
 		}
 
-		for (int i = a; i < b; i++)
-			m_data.get()[i] *= g;
+		for (int channel = 0; channel < m_channels; ++channel)
+			for (int frame = a; frame < b; ++frame)
+				at(frame, channel) *= g;
 	}
 
 	/* ---------------------------------------------------------------------- */
@@ -482,25 +478,11 @@ private:
 
 	/* ---------------------------------------------------------------------- */
 
-	constexpr void assertFrame(int frame) const
+	constexpr void assertSample(int frame, int channel) const
 	{
 		assert(m_data != nullptr);
 		assert(frame < m_size);
-	}
-
-	/* ---------------------------------------------------------------------- */
-
-	constexpr void assertSample(int frame, int channel) const
-	{
-		assertFrame(frame);
 		assert(channel < m_channels);
-	}
-
-	/* ---------------------------------------------------------------------- */
-
-	constexpr float* getFramePtr(int frame) const
-	{
-		return m_data.get() + (frame * m_channels);
 	}
 
 	/* ---------------------------------------------------------------------- */
