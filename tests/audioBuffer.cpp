@@ -17,7 +17,7 @@ void fillBufferWithData(AudioBuffer& b)
 {
 	for (int i = 0; i < b.countFrames(); i++)
 		for (int k = 0; k < b.countChannels(); k++)
-			b[i][k] = static_cast<float>(i + k);
+			b.at(i, k) = static_cast<float>(i + k);
 }
 
 void testCopy(AudioBuffer& a, AudioBuffer& b)
@@ -43,7 +43,7 @@ void testMove(AudioBuffer& a, AudioBuffer& b, int sourceBufferSize, int sourceNu
 
 	for (int i = 0; i < a.countFrames(); i++)
 		for (int k = 0; k < a.countChannels(); k++)
-			REQUIRE(a[i][k] == static_cast<float>(i + k));
+			REQUIRE(a.at(i, k) == static_cast<float>(i + k));
 }
 
 TEST_CASE("AudioBuffer")
@@ -85,7 +85,7 @@ TEST_CASE("AudioBuffer")
 		buffer.clear();
 		for (int i = 0; i < buffer.countFrames(); i++)
 			for (int k = 0; k < buffer.countChannels(); k++)
-				REQUIRE(buffer[i][k] == 0.0f);
+				REQUIRE(buffer.at(i, k) == 0.0f);
 		buffer.free();
 	}
 
@@ -93,12 +93,12 @@ TEST_CASE("AudioBuffer")
 	{
 		for (int i = 0; i < buffer.countFrames(); i++)
 			for (int k = 0; k < buffer.countChannels(); k++)
-				buffer[i][k] = 1.0f;
+				buffer.at(i, k) = 1.0f;
 
 		buffer.clear(5, 6);
 
 		for (int k = 0; k < buffer.countChannels(); k++)
-			REQUIRE(buffer[5][k] == 0.0f);
+			REQUIRE(buffer.at(5, k) == 0.0f);
 
 		buffer.free();
 	}
@@ -185,7 +185,7 @@ TEST_CASE("AudioBuffer")
 
 			for (int i = 0; i < dest.countFrames(); i++)
 				for (int k = 0; k < dest.countChannels(); k++)
-					REQUIRE(dest[i][k] == static_cast<float>(i + k));
+					REQUIRE(dest.at(i, k) == static_cast<float>(i + k));
 		}
 
 		SECTION("partial")
@@ -197,7 +197,7 @@ TEST_CASE("AudioBuffer")
 
 			for (int i = 0; i < dest.countFrames(); i++)
 				for (int k = 0; k < dest.countChannels(); k++)
-					REQUIRE(dest[i][k] == (i < framesToCopy ? static_cast<float>(i + k) : 0.0f));
+					REQUIRE(dest.at(i, k) == (i < framesToCopy ? static_cast<float>(i + k) : 0.0f));
 		}
 
 		SECTION("partial with offset")
@@ -212,9 +212,9 @@ TEST_CASE("AudioBuffer")
 				for (int k = 0; k < dest.countChannels(); k++)
 				{
 					if (i == 0)
-						REQUIRE(dest[i][k] == 0.0f);
+						REQUIRE(dest.at(i, k) == 0.0f);
 					else
-						REQUIRE(dest[i][k] == (i < framesToCopy + offset ? static_cast<float>(i + k) : 0.0f));
+						REQUIRE(dest.at(i, k) == (i < framesToCopy + offset ? static_cast<float>(i + k) : 0.0f));
 				}
 		}
 	}
@@ -233,6 +233,6 @@ TEST_CASE("AudioBuffer")
 
 		for (int i = 0; i < dest.countFrames(); i++)
 			for (int k = 0; k < dest.countChannels(); k++)
-				REQUIRE(dest[i][k] == static_cast<float>(i));
+				REQUIRE(dest.at(i, k) == static_cast<float>(i));
 	}
 }
