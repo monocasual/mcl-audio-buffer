@@ -390,30 +390,6 @@ public:
 
 	/* ---------------------------------------------------------------------- */
 
-	/* forEachFrame
-	Applies a function to each frame in the audio buffer. */
-
-	void forEachFrame(std::function<void(float* /*channels*/, int /*numFrame*/)> f)
-	{
-		for (int i = 0; i < countFrames(); i++)
-			f(at(i), i);
-	}
-
-	/* ---------------------------------------------------------------------- */
-
-	/* forEachChannel
-	Applies a function to each channel in the given frame. */
-
-	void forEachChannel(int frame, std::function<void(float& /*value*/, int /*numChannel*/)> f)
-	{
-		assert(frame < m_size);
-
-		for (int i = 0; i < countChannels(); i++)
-			f(at(frame, i), i);
-	}
-
-	/* ---------------------------------------------------------------------- */
-
 	/* forEachSample
 	Applies a function to each sample in the audio buffer. */
 
