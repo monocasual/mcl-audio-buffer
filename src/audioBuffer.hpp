@@ -389,13 +389,12 @@ public:
 	constexpr void applyGain(float g, int a = 0, int b = -1)
 	{
 		assert(a >= 0);
-		assert(b < countFrames());
+		assert(a <= countFrames());
+		assert(b == -1 || b <= countFrames());
+		assert(b == -1 || a <= b);
 
 		if (b == -1)
-		{
 			b = countFrames();
-			assert(a < b);
-		}
 
 		for (int channel = 0; channel < m_channels; ++channel)
 			for (int frame = a; frame < b; ++frame)
