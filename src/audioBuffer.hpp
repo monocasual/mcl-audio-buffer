@@ -389,11 +389,11 @@ public:
 	constexpr void applyGain(float g, int a = 0, int b = -1)
 	{
 		assert(a >= 0);
-		assert(b < countSamples());
+		assert(b < countFrames());
 
 		if (b == -1)
 		{
-			b = countSamples();
+			b = countFrames();
 			assert(a < b);
 		}
 
