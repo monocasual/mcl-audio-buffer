@@ -32,6 +32,7 @@
 #include <cassert>
 #include <functional>
 #include <memory>
+#include <span>
 #include <utility>
 
 namespace mcl
@@ -182,16 +183,30 @@ public:
 	Returns a pointer to the first sample of the given channel. The buffer uses
 	planar layout, so each channel occupies a contiguous block of frames in memory. */
 
+	[[deprecated("Use getChannel() instead, which returns a std::span")]]
 	constexpr float* getChannelPtr(int channel)
 	{
 		assertChannel(channel);
 		return m_data.get() + (channel * m_size);
 	}
 
+	[[deprecated("Use getChannel() instead, which returns a std::span")]]
 	constexpr const float* getChannelPtr(int channel) const
 	{
 		assertChannel(channel);
 		return m_data.get() + (channel * m_size);
+	}
+
+	constexpr std::span<float> getChannel(int channel)
+	{
+		assertChannel(channel);
+		return std::span<float>(m_data.get() + (channel * m_size), m_size);
+	}
+
+	constexpr std::span<const float> getChannel(int channel) const
+	{
+		assertChannel(channel);
+		return std::span<const float>(m_data.get() + (channel * m_size), m_size);
 	}
 
 	/* ---------------------------------------------------------------------- */
@@ -199,8 +214,27 @@ public:
 	/* getData
 	Returns a pointer to the underlying data. */
 
-	constexpr float*       getDataPtr() { return m_data.get(); }
-	constexpr const float* getDataPtr() const { return m_data.get(); }
+	[[deprecated("Use getData() instead, which returns a std::span")]]
+	constexpr float* getDataPtr()
+	{
+		return m_data.get();
+	}
+
+	[[deprecated("Use getData() instead, which returns a std::span")]]
+	constexpr const float* getDataPtr() const
+	{
+		return m_data.get();
+	}
+
+	constexpr std::span<float> getData()
+	{
+		return std::span<float>(m_data.get(), countSamples());
+	}
+
+	constexpr std::span<const float> getData() const
+	{
+		return std::span<const float>(m_data.get(), countSamples());
+	}
 
 	/* ---------------------------------------------------------------------- */
 
