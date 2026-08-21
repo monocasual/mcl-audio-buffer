@@ -180,22 +180,8 @@ public:
 	/* ---------------------------------------------------------------------- */
 
 	/* getChannel
-	Returns a pointer to the first sample of the given channel. The buffer uses
+	Returns a span to the first sample of the given channel. The buffer uses
 	planar layout, so each channel occupies a contiguous block of frames in memory. */
-
-	[[deprecated("Use getChannel() instead, which returns a std::span")]]
-	constexpr float* getChannelPtr(int channel)
-	{
-		assertChannel(channel);
-		return m_data.get() + (channel * m_size);
-	}
-
-	[[deprecated("Use getChannel() instead, which returns a std::span")]]
-	constexpr const float* getChannelPtr(int channel) const
-	{
-		assertChannel(channel);
-		return m_data.get() + (channel * m_size);
-	}
 
 	constexpr std::span<float> getChannel(int channel)
 	{
@@ -212,19 +198,7 @@ public:
 	/* ---------------------------------------------------------------------- */
 
 	/* getData
-	Returns a pointer to the underlying data. */
-
-	[[deprecated("Use getData() instead, which returns a std::span")]]
-	constexpr float* getDataPtr()
-	{
-		return m_data.get();
-	}
-
-	[[deprecated("Use getData() instead, which returns a std::span")]]
-	constexpr const float* getDataPtr() const
-	{
-		return m_data.get();
-	}
+	Returns a span to the underlying data. */
 
 	constexpr std::span<float> getData()
 	{
