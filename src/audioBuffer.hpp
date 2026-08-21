@@ -180,8 +180,7 @@ public:
 	/* ---------------------------------------------------------------------- */
 
 	/* getChannel
-	Returns a span to the first sample of the given channel. The buffer uses
-	planar layout, so each channel occupies a contiguous block of frames in memory. */
+	Returns the frames belonging to one channel, as a span. */
 
 	constexpr std::span<float> getChannel(int channel)
 	{
@@ -198,7 +197,7 @@ public:
 	/* ---------------------------------------------------------------------- */
 
 	/* getData
-	Returns a span to the underlying data. */
+	Returns a span to the underlying whole data. */
 
 	constexpr std::span<float> getData()
 	{
