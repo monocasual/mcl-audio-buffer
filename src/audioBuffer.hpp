@@ -182,13 +182,13 @@ public:
 	Returns a pointer to the first sample of the given channel. The buffer uses
 	planar layout, so each channel occupies a contiguous block of frames in memory. */
 
-	constexpr float* getChannel(int channel)
+	constexpr float* getChannelPtr(int channel)
 	{
 		assertChannel(channel);
 		return m_data.get() + (channel * m_size);
 	}
 
-	constexpr const float* getChannel(int channel) const
+	constexpr const float* getChannelPtr(int channel) const
 	{
 		assertChannel(channel);
 		return m_data.get() + (channel * m_size);
@@ -199,8 +199,8 @@ public:
 	/* getData
 	Returns a pointer to the underlying data. */
 
-	constexpr float*       getData() { return m_data.get(); }
-	constexpr const float* getData() const { return m_data.get(); }
+	constexpr float*       getDataPtr() { return m_data.get(); }
+	constexpr const float* getDataPtr() const { return m_data.get(); }
 
 	/* ---------------------------------------------------------------------- */
 
