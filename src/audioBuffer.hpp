@@ -31,7 +31,6 @@
 #include <array>
 #include <cassert>
 #include <functional>
-#include <mdspan>
 #include <memory>
 #include <span>
 #include <utility>
@@ -59,23 +58,6 @@ class AudioBuffer
 public:
 	using ChannelView      = std::span<float>;
 	using ConstChannelView = std::span<const float>;
-
-	/* Extents
-	The shape of an mdspan (used in getDataView): how many channels, how many
-	frames. Both are decided at runtime (that's what dynamic_extent means), since
-	they depend on the buffer's actual size. */
-
-	using Extents = std::extents<std::size_t, std::dynamic_extent, std::dynamic_extent>;
-
-	/* DataView
-	A view over the internal data array that still knows the buffer's real
-	per-channel size internally (that's what layout_stride is for).
-	This means a "view" over a shorter range of frames still reads/writes the
-	right memory, because it never confuses "how many frames I can see" with
-	"how far apart the channels really are". */
-
-	using DataView      = std::mdspan<float, Extents, std::layout_stride>;
-	using ConstDataView = std::mdspan<const float, Extents, std::layout_stride>;
 
 	/* AudioBuffer (1)
 	Creates an empty (and invalid) audio buffer. */
@@ -218,29 +200,16 @@ public:
 	/* ---------------------------------------------------------------------- */
 
 	/* getData
-	Returns a view over frames [begin, end), covering every channel. Calling it
-	with no arguments (or end left at 0) returns a view over the whole buffer. */
+	Returns a span to the underlying whole data. */
 
-	constexpr ConstDataView getDataView(std::size_t begin = 0, std::size_t end = 0) const
+	constexpr std::span<float> getDataView()
 	{
-		// TODO - use std::size_t everywhere
-		if (end == 0)
-			end = static_cast<std::size_t>(m_size);
-
-		assert(begin <= end);
-		assert(end <= static_cast<std::size_t>(m_size));
-
-		const Extents                              shape(m_channels, end - begin);
-		const std::array<std::size_t, 2>           strides{static_cast<std::size_t>(m_size), 1};
-		const std::layout_stride::mapping<Extents> mapping(shape, strides);
-
-		return ConstDataView(m_data.get() + begin, mapping);
+		return std::span<float>(m_data.get(), countSamples());
 	}
 
-	constexpr DataView getDataView(std::size_t begin = 0, std::size_t end = 0)
+	constexpr std::span<const float> getDataView() const
 	{
-		const ConstDataView view = std::as_const(*this).getDataView(begin, end);
-		return DataView(const_cast<float*>(view.data_handle()), view.mapping());
+		return std::span<const float>(m_data.get(), countSamples());
 	}
 
 	/* ---------------------------------------------------------------------- */
