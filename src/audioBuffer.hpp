@@ -182,13 +182,13 @@ public:
 	/* getChannel
 	Returns the frames belonging to one channel, as a span. */
 
-	constexpr std::span<float> getChannel(int channel)
+	constexpr std::span<float> getChannelView(int channel)
 	{
 		assertChannel(channel);
 		return std::span<float>(m_data.get() + (channel * m_size), m_size);
 	}
 
-	constexpr std::span<const float> getChannel(int channel) const
+	constexpr std::span<const float> getChannelView(int channel) const
 	{
 		assertChannel(channel);
 		return std::span<const float>(m_data.get() + (channel * m_size), m_size);
@@ -199,12 +199,12 @@ public:
 	/* getData
 	Returns a span to the underlying whole data. */
 
-	constexpr std::span<float> getData()
+	constexpr std::span<float> getDataView()
 	{
 		return std::span<float>(m_data.get(), countSamples());
 	}
 
-	constexpr std::span<const float> getData() const
+	constexpr std::span<const float> getDataView() const
 	{
 		return std::span<const float>(m_data.get(), countSamples());
 	}
