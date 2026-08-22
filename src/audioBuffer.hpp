@@ -58,6 +58,8 @@ class AudioBuffer
 public:
 	using ChannelView      = std::span<float>;
 	using ConstChannelView = std::span<const float>;
+	using DataView         = std::span<float>;
+	using ConstDataView    = std::span<const float>;
 
 	/* AudioBuffer (1)
 	Creates an empty (and invalid) audio buffer. */
@@ -185,16 +187,23 @@ public:
 	/* getChannel
 	Returns the frames belonging to one channel, as a span. */
 
-	constexpr ChannelView getChannelView(int channel)
+	constexpr ConstChannelView getChannelView(int channel, std::size_t begin = 0, std::size_t end = 0) const
 	{
 		assertChannel(channel);
-		return std::span<float>(m_data.get() + (channel * m_size), m_size);
+
+		if (end == 0)
+			end = static_cast<std::size_t>(m_size);
+
+		assert(begin <= end);
+		assert(end <= static_cast<std::size_t>(m_size));
+
+		return ConstChannelView(m_data.get() + (channel * m_size) + begin, end - begin);
 	}
 
-	constexpr ConstChannelView getChannelView(int channel) const
+	constexpr ChannelView getChannelView(int channel, std::size_t begin = 0, std::size_t end = 0)
 	{
-		assertChannel(channel);
-		return std::span<const float>(m_data.get() + (channel * m_size), m_size);
+		const ConstChannelView view = std::as_const(*this).getChannelView(channel, begin, end);
+		return ChannelView(const_cast<float*>(view.data()), view.size());
 	}
 
 	/* ---------------------------------------------------------------------- */
@@ -202,14 +211,14 @@ public:
 	/* getData
 	Returns a span to the underlying whole data. */
 
-	constexpr std::span<float> getDataView()
+	constexpr DataView getDataView()
 	{
-		return std::span<float>(m_data.get(), countSamples());
+		return DataView(m_data.get(), countSamples());
 	}
 
-	constexpr std::span<const float> getDataView() const
+	constexpr ConstDataView getDataView() const
 	{
-		return std::span<const float>(m_data.get(), countSamples());
+		return ConstDataView(m_data.get(), countSamples());
 	}
 
 	/* ---------------------------------------------------------------------- */
