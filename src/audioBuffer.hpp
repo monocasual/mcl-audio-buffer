@@ -56,6 +56,9 @@ Access examples:
 class AudioBuffer
 {
 public:
+	using ChannelView      = std::span<float>;
+	using ConstChannelView = std::span<const float>;
+
 	/* AudioBuffer (1)
 	Creates an empty (and invalid) audio buffer. */
 
@@ -182,13 +185,13 @@ public:
 	/* getChannel
 	Returns the frames belonging to one channel, as a span. */
 
-	constexpr std::span<float> getChannelView(int channel)
+	constexpr ChannelView getChannelView(int channel)
 	{
 		assertChannel(channel);
 		return std::span<float>(m_data.get() + (channel * m_size), m_size);
 	}
 
-	constexpr std::span<const float> getChannelView(int channel) const
+	constexpr ConstChannelView getChannelView(int channel) const
 	{
 		assertChannel(channel);
 		return std::span<const float>(m_data.get() + (channel * m_size), m_size);
