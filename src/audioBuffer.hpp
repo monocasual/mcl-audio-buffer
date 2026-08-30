@@ -226,14 +226,14 @@ public:
 	/* getPeak
 	Returns the highest value from the specified channel. */
 
-	constexpr float getPeak(int channel, int a = 0, int b = -1) const
+	constexpr float getPeak(int channel, int a = 0, int b = 0) const
 	{
 		assert(channel < m_channels);
 		assert(a >= 0);
-		assert(b == -1 || a < b);
-		assert(b == -1 || b <= countFrames());
+		assert(b == 0 || a < b);
+		assert(b == 0 || b <= countFrames());
 
-		if (b == -1)
+		if (b == 0)
 			b = countFrames();
 
 		float peak = 0.0f;
@@ -321,14 +321,14 @@ public:
 
 	constexpr void sum(const AudioBuffer& b, int srcChannel, int destChannel, float gain = 1.0f)
 	{
-		merge<Operation::SUM>(b, -1, 0, 0, srcChannel, destChannel, gain);
+		merge<Operation::SUM>(b, 0, 0, 0, srcChannel, destChannel, gain);
 	}
 
 	/* ---------------------------------------------------------------------- */
 
 	constexpr void set(const AudioBuffer& b, int srcChannel, int destChannel, float gain = 1.0f)
 	{
-		merge<Operation::SET>(b, -1, 0, 0, srcChannel, destChannel, gain);
+		merge<Operation::SET>(b, 0, 0, 0, srcChannel, destChannel, gain);
 	}
 
 	/* ---------------------------------------------------------------------- */
@@ -390,11 +390,11 @@ public:
 	Clears the internal data by setting all samples to 0.0f. Optional parameters
 	'a' and 'b' set the range. */
 
-	constexpr void clear(int a = 0, int b = -1)
+	constexpr void clear(int a = 0, int b = 0)
 	{
 		if (m_data == nullptr)
 			return;
-		if (b == -1)
+		if (b == 0)
 			b = m_size;
 		for (int channel = 0; channel < m_channels; ++channel)
 			std::fill_n(m_data.get() + (channel * m_size) + a, b - a, 0.0);
@@ -405,14 +405,14 @@ public:
 	/* applyGain
 	Applies gain 'g' to buffer. Optional parameters	'a' and 'b' set the range.*/
 
-	constexpr void applyGain(float g, int a = 0, int b = -1)
+	constexpr void applyGain(float g, int a = 0, int b = 0)
 	{
 		assert(a >= 0);
 		assert(a <= countFrames());
-		assert(b == -1 || b <= countFrames());
-		assert(b == -1 || a <= b);
+		assert(b == 0 || b <= countFrames());
+		assert(b == 0 || a <= b);
 
-		if (b == -1)
+		if (b == 0)
 			b = countFrames();
 
 		for (int channel = 0; channel < m_channels; ++channel)
@@ -452,7 +452,7 @@ private:
 		/* Make sure the amount of frames to copy lies within the current buffer
 		size. */
 
-		framesToCopy = framesToCopy == -1 ? b.countFrames() : framesToCopy;
+		framesToCopy = framesToCopy == 0 ? b.countFrames() : framesToCopy;
 		framesToCopy = std::min(framesToCopy, m_size - destOffset);
 
 		for (int destF = 0, srcF = srcOffset; destF < framesToCopy && destF < b.countFrames(); destF++, srcF++)
