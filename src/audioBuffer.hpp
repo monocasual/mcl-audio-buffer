@@ -514,7 +514,7 @@ private:
 
 	/* ---------------------------------------------------------------------- */
 
-	constexpr void assertSample(int frame, int channel) const
+	constexpr void assertSample([[maybe_unused]] int frame, [[maybe_unused]] int channel) const
 	{
 		assert(m_data != nullptr);
 		assert(frame < m_size);
@@ -523,7 +523,7 @@ private:
 
 	/* ---------------------------------------------------------------------- */
 
-	constexpr void assertChannel(int channel) const
+	constexpr void assertChannel([[maybe_unused]] int channel) const
 	{
 		assert(channel >= 0);
 		assert(channel < m_channels);
